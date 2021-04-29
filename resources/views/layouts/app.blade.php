@@ -9,6 +9,10 @@
 
     <title>{{ config('app.name', 'Laravel') }}</title>
 
+    <!-- Bootstrap -->
+    <script src="{{ asset('vendor/bootstrap/css/bootstrap.min.css') }}" defer></script>
+    
+
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
 
@@ -76,5 +80,8 @@
             @yield('content')
         </main>
     </div>
+
+    <script src="{{ asset('vendor/jquery/jquery.min.js') }}" defer></script>
+    <script src="{{ asset('vendor/bootstrap/js/bootstrap.min.js') }}" defer></script>
 </body>
 </html>
