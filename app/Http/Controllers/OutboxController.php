@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Category;
 use App\Http\Requests\CreateOutboxRequest;
 use App\Outbox;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class OutboxController extends Controller
 {
@@ -42,27 +44,45 @@ class OutboxController extends Controller
 
         $today = Carbon::now()->startOfDay();
         $date = Carbon::parse($data['date']);
+        $suffix = null;
 
         if ($date->lt($today)) {
-            $last_index = Outbox::where('date', '<=', $date['date'])
+            $last_index = Outbox::where('date', '<=', $date->format('Y-m-d'))
+                ->whereYear('date', $date->year)
                 ->orderBy('index', 'desc')
                 ->orderBy('suffix', 'desc')
                 ->first();
-            $next_index = 0;
+
+            if (!$last_index) {
+                $last_index = Outbox::whereYear('date', $date->year)
+                    ->orderBy('index', 'asc')
+                    ->orderBy('suffix', 'desc')
+                    ->first();
+            }
+
+            $next_index = $last_index ? $last_index->index : 1;
+
+            if ($last_index && $last_index->suffix) {
+                $suffix = Str::upper(++$last_index->suffix);
+            } else if ($last_index) {
+                $suffix = 'A';
+            }
         } else {
-            $last_index = Outbox::whereYear('date', $date->year)->orderBy('index', 'desc')->first()->index;
-            $next_index = $last_index ? $last_index + 1 : 1;
+            $last_index = Outbox::whereYear('date', $date->year)->orderBy('index', 'desc')->first();
+            $next_index = $last_index ? $last_index->index + 1 : 1;
         }
 
-        dump($last_index);
-        dump($next_index);
-        die();
+        $category = Category::findOrFail($data['category_id']);
 
+        $data['suffix'] = $suffix;
+        $data['reff'] = "W28-A4/" . $next_index . $suffix . "/" . $category->code . "/" . romanic_number($date->month) . "/" . $date->year;
         $data['date'] = $date->format('Y-m-d');
         $data['index'] = $next_index;
         $data['user_id'] = Auth::id();
 
-        Outbox::create($data);
+        $outbox = Outbox::create($data);
+
+        return redirect()->route('outbox.edit', $outbox->id);
     }
 
     /**
@@ -84,7 +104,9 @@ class OutboxController extends Controller
      */
     public function edit(Outbox $outbox)
     {
-        //
+        $outbox = Outbox::with('category')->findOrFail($outbox->id);
+
+        return view('pages.outbox.edit', $outbox);
     }
 
     /**

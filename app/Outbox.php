@@ -14,10 +14,22 @@ class Outbox extends Model
     protected $fillable = [
         'index',
         'suffix',
+        'reff',
         'date',
         'subject',
         'destination',
         'category_id',
         'user_id',
     ];
+
+
+    /**
+     * Get the category associated with the Outbox
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function category()
+    {
+        return $this->hasOne(Category::class, 'id', 'category_id');
+    }
 }
