@@ -112,9 +112,23 @@
                         <div class="row mt-3">
                             <div class="col">
                                 <button type="submit" class="btn btn-success px-3 mr-1">Simpan</button>
-                                <a href="#" class="btn btn-outline-danger px-3">Batal</a>
+                                <button type="button" class="btn btn-outline-danger px-3"
+                                        onclick="onDelete()">
+                                    Hapus</button>
+                                {{-- <a href="{{ route('outbox.destroy', $id) }}"
+                                class="btn btn-outline-danger px-3"
+                                onclick="event.preventDefault();
+                                document.getElementById('delete-item').submit();">
+                                Batal</a> --}}
+
                             </div>
                         </div>
+                    </form>
+
+                    <form id="delete-item" action="{{ route('outbox.destroy', $id) }}" method="POST"
+                          class="d-none">
+                        @csrf
+                        @method('DELETE')
                     </form>
                 </div>
             </div>
@@ -153,6 +167,24 @@
                 }
             }
         });
+
+        onDelete = () => {
+            swalDanger.fire({
+                title: 'Anda yakin untuk menghapus?',
+                text: 'Data yang telah dihapus tidak dapat dikembalikan!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: `Hapus`,
+                cancelButtonText: `Batal`,
+                reverseButtons: true,
+                focusConfirm: false,
+                }).then((result) => {
+                    if (result.isDenied) {
+                        $('#delete-item').submit();
+                    } 
+                }
+            )
+        }
     });
 </script>
 @endpush

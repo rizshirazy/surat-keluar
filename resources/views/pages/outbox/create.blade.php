@@ -79,7 +79,7 @@
                         <div class="row mt-3">
                             <div class="col">
                                 <button type="submit" class="btn btn-success px-3 mr-1">Simpan</button>
-                                <a href="#" class="btn btn-light px-3">Batal</a>
+                                <a href="{{ route('outbox.index') }}" class="btn btn-light px-3">Batal</a>
                             </div>
                         </div>
                     </form>

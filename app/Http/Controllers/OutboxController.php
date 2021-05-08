@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Category;
 use App\Http\Requests\CreateOutboxRequest;
+use App\Http\Requests\UpdateOutboxRequest;
 use App\Outbox;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Yajra\DataTables\Facades\DataTables;
 
 class OutboxController extends Controller
 {
@@ -19,6 +21,31 @@ class OutboxController extends Controller
      */
     public function index()
     {
+        if (request()->ajax()) {
+            $query = Outbox::query();
+
+            return DataTables::of($query)
+                ->editColumn('date', function ($item) {
+                    return  date('d-m-Y', strtotime($item->date));
+                })
+                ->editColumn('document', function ($item) {
+                    return  '<a href="' . Storage::url($item->document) . '" class="btn btn-light text-danger" title="Lihat"><i class="fas fa-file-pdf"></i></a>';
+                })
+                ->addColumn('category', function ($item) {
+                    return $item->category->code . " " . $item->category->name;
+                })
+                ->addColumn('action', function ($item) {
+                    return '
+                    <div class="btn-group" role="group" aria-label="Basic example">
+                    <a href="' . route('outbox.edit', $item->id) . '" class="btn btn-light" title="Edit"><i class="fas fa-pencil-alt"></i></a>
+                    <a href="' . route('outbox.show', $item->id) . '" class="btn btn-light" title="Detail"><i class="fas fa-chevron-right"></i></a>
+                    </div>
+                    ';
+                })
+                ->rawColumns(['document', 'action'])
+                ->make(true);
+        }
+
         return view('pages.outbox.index');
     }
 
@@ -116,9 +143,58 @@ class OutboxController extends Controller
      * @param  \App\Outbox  $outbox
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Outbox $outbox)
+    public function update(UpdateOutboxRequest $request, Outbox $outbox)
     {
-        //
+        $data = $request->all();
+
+        $today = Carbon::now()->startOfDay();
+        $date = Carbon::parse($data['date']);
+
+        $category = Category::findOrFail($data['category_id']);
+
+        if ($date->format('Y-m-d') == $outbox->date) {
+            $data['reff'] = "W28-A4/" . $outbox->index . $outbox->suffix . "/" . $category->code . "/" . romanic_number($date->month) . "/" . $date->year;
+        } else {
+            $suffix = null;
+
+            if ($date->lt($today)) {
+
+                $last_index = Outbox::where('date', '<=', $date->format('Y-m-d'))
+                    ->where('id', '<>', $outbox->id)
+                    ->whereYear('date', $date->year)
+                    ->orderBy('index', 'desc')
+                    ->orderBy('suffix', 'desc')
+                    ->first();
+
+                if (!$last_index) {
+                    $last_index = Outbox::whereYear('date', $date->year)
+                        ->where('id', '<>', $outbox->id)
+                        ->orderBy('index', 'asc')
+                        ->orderBy('suffix', 'desc')
+                        ->first();
+                }
+
+                $next_index = $last_index ? $last_index->index : 1;
+
+                if ($last_index && $last_index->suffix) {
+                    $suffix = Str::upper(++$last_index->suffix);
+                } else if ($last_index) {
+                    $suffix = 'A';
+                }
+            } else {
+                $last_index = Outbox::whereYear('date', $date->year)->orderBy('index', 'desc')->first();
+                $next_index = $last_index ? $last_index->index + 1 : 1;
+            }
+
+            $data['suffix'] = $suffix;
+            $data['reff'] = "W28-A4/" . $next_index . $suffix . "/" . $category->code . "/" . romanic_number($date->month) . "/" . $date->year;
+            $data['index'] = $next_index;
+        }
+
+        $data['date'] = $date->format('Y-m-d');
+        $outbox->update($data);
+
+        return redirect()->route('outbox.edit', $outbox->id);
     }
 
     /**
@@ -129,6 +205,8 @@ class OutboxController extends Controller
      */
     public function destroy(Outbox $outbox)
     {
-        //
+        $outbox->delete();
+
+        return redirect()->route('outbox.index');
     }
 }
