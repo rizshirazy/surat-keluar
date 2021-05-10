@@ -4,31 +4,33 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-12">
-            <div class="card shadow-sm p-3">
+            <div class="card glass-effect p-3" style="background-color: transparent; border:none">
 
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
-                        <h3>Surat Keluar</h3>
+                        <h3 class="text-white">Surat Keluar</h3>
                         <a href="{{ route('outbox.create') }}" class="btn btn-success px-4">Tambah Data</a>
                     </div>
 
                     @include('includes.alert')
 
-                    <div class="table-responsive mt-3">
-                        <table id="resultTable" class="table">
-                            <thead>
-                                <tr>
-                                    <th>Nomor Surat</th>
-                                    <th>Tanggal</th>
-                                    <th>Kode Surat</th>
-                                    <th>Perihal</th>
-                                    <th>Tujuan</th>
-                                    <th>Salinan</th>
-                                    <th>Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
+                    <div class="bg-white rounded p-3 mt-3 ">
+                        <div class="table-responsive mt-3">
+                            <table id="resultTable" class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Nomor Surat</th>
+                                        <th>Tanggal</th>
+                                        <th>Kode Surat</th>
+                                        <th>Perihal</th>
+                                        <th>Tujuan</th>
+                                        <th>Salinan</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -4,6 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="{{ asset('images/logo.png') }}" type="image/png">
 
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -70,7 +71,7 @@
             font-weight: 500;
         }
 
-        .main-container {
+        .glass-effect {
             box-shadow: 0 0 1rem 0 rgba(0, 0, 0, .2);
             border-radius: 5px;
             background-color: rgba(255, 255, 255, .15);

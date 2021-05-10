@@ -1,6 +1,7 @@
 <nav class="navbar-1-1 navbar navbar-expand-md navbar-light bg-white shadow-sm p-4 px-md-4 mb-3">
     <div class="container">
         <a class="navbar-brand" href="{{ url('/') }}">
+            <img src="{{ asset('images/logo.png') }}" alt="" style="width: 35px; margin-top: -3.5px">
             {{ config('app.name', 'Laravel') }}
         </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"

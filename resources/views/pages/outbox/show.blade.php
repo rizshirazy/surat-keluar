@@ -4,37 +4,37 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-12">
-            <div class="card shadow-sm p-3">
+            <div class="card glass-effect p-3" style="background-color: transparent; border:none">
 
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
-                        <h4>Surat Keluar</h4>
+                        <h4 class="text-white">Surat Keluar</h4>
                     </div>
 
-                    <table class="table mt-3">
+                    <table class="table my-3">
                         <tr>
-                            <th width="20%">Nomor Surat</th>
-                            <td>{{ $data->reff }}</td>
+                            <th class="bg-light" width="20%">Nomor Surat</th>
+                            <td class="bg-white">{{ $data->reff }}</td>
                         </tr>
                         <tr>
-                            <th width="20%">Tanggal</th>
-                            <td>{{ Carbon\Carbon::parse($data->date)->format('d-m-Y') }}</td>
+                            <th class="bg-light" width="20%">Tanggal</th>
+                            <td class="bg-white">{{ Carbon\Carbon::parse($data->date)->format('d-m-Y') }}</td>
                         </tr>
                         <tr>
-                            <th width="20%">Kode Surat</th>
-                            <td>{{ $data->category['code']." - ".$data->category['name']}}</td>
+                            <th class="bg-light" width="20%">Kode Surat</th>
+                            <td class="bg-white">{{ $data->category['code']." - ".$data->category['name']}}</td>
                         </tr>
                         <tr>
-                            <th width="20%">Perihal</th>
-                            <td>{{ $data->subject }}</td>
+                            <th class="bg-light" width="20%">Perihal</th>
+                            <td class="bg-white">{{ $data->subject }}</td>
                         </tr>
                         <tr>
-                            <th width="20%">Tujuan</th>
-                            <td>{{ $data->destination }}</td>
+                            <th class="bg-light" width="20%">Tujuan</th>
+                            <td class="bg-white">{{ $data->destination }}</td>
                         </tr>
                         <tr>
-                            <th width="20%">Dokumen</th>
-                            <td>
+                            <th class="bg-light" width="20%">Dokumen</th>
+                            <td class="bg-white">
                                 @if ($data->document)
                                 <a href="{{ Storage::url($item->document) }}" target="_blank"
                                    class="btn btn-light text-danger" title="Lihat">
@@ -46,8 +46,8 @@
                             </td>
                         </tr>
                         <tr>
-                            <th width="20%">Nama Pegawai</th>
-                            <td>{{ $data->user->name }}</td>
+                            <th class="bg-light" width="20%">Nama Pegawai</th>
+                            <td class="bg-white">{{ $data->user->name }}</td>
                         </tr>
                     </table>
 

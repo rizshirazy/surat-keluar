@@ -91,7 +91,7 @@ class CategoryController extends Controller
 
         if ($q = $request->input('q')) {
             $data = Category::whereRaw("UPPER(TRIM(name)) LIKE UPPER(TRIM('%{$q}%'))", [$q])
-                ->orWherRaw("UPPER(TRIM(code)) LIKE UPPER(TRIM('%{$q}%'))", [$q])
+                ->orWhereRaw("UPPER(TRIM(code)) LIKE UPPER(TRIM('%{$q}%'))", [$q])
                 ->get();
         }
 
