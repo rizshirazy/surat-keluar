@@ -29,18 +29,26 @@ class OutboxController extends Controller
                     return  date('d-m-Y', strtotime($item->date));
                 })
                 ->editColumn('document', function ($item) {
-                    return  '<a href="' . Storage::url($item->document) . '" class="btn btn-light text-danger" title="Lihat"><i class="fas fa-file-pdf"></i></a>';
+                    if ($item->document) {
+                        return  '<a href="' . Storage::url($item->document) . '" target="_blank" class="btn btn-light text-danger" title="Lihat"><i class="fas fa-file-pdf"></i></a>';
+                    } else {
+                        return '';
+                    }
                 })
                 ->addColumn('category', function ($item) {
                     return $item->category->code . " " . $item->category->name;
                 })
                 ->addColumn('action', function ($item) {
-                    return '
-                    <div class="btn-group" role="group" aria-label="Basic example">
-                    <a href="' . route('outbox.edit', $item->id) . '" class="btn btn-light" title="Edit"><i class="fas fa-pencil-alt"></i></a>
-                    <a href="' . route('outbox.show', $item->id) . '" class="btn btn-light" title="Detail"><i class="fas fa-chevron-right"></i></a>
-                    </div>
-                    ';
+                    $action = '';
+
+                    if (Auth::id() == $item->user_id) {
+                        $action .=
+                            '<a href="' . route('outbox.edit', $item->id) . '" class="btn btn-light" title="Edit"><i class="fas fa-pencil-alt"></i></a>';
+                    }
+
+                    $action .= '<a href="' . route('outbox.show', $item->id) . '" class="btn btn-light" title="Detail"><i class="fas fa-chevron-right"></i></a>';
+
+                    return '<div class="btn-group" role="group">' . $action . '</div>';
                 })
                 ->rawColumns(['document', 'action'])
                 ->make(true);
@@ -120,7 +128,9 @@ class OutboxController extends Controller
      */
     public function show(Outbox $outbox)
     {
-        //
+        return view('pages.outbox.show', [
+            'data' => $outbox
+        ]);
     }
 
     /**
@@ -133,7 +143,21 @@ class OutboxController extends Controller
     {
         $outbox = Outbox::with('category')->findOrFail($outbox->id);
 
-        return view('pages.outbox.edit', $outbox);
+        $today = Carbon::now()->startOfDay();
+        $date = Carbon::parse($outbox->date);
+
+        $editableDate = $today->lte($date);
+
+        if (Auth::id() == $outbox->user_id) {
+            return view('pages.outbox.edit', [
+                'data' => $outbox,
+                'editableDate' => $editableDate
+            ]);
+        }
+
+        return view('pages.outbox.show', [
+            'data' => $outbox
+        ]);
     }
 
     /**
@@ -191,10 +215,21 @@ class OutboxController extends Controller
             $data['index'] = $next_index;
         }
 
+        if ($file = $request->file('document')) {
+
+            $extention = $file->getClientOriginalExtension();
+
+            if (in_array($extention, ['pdf'])) {
+                $data['document'] = $file->store('assets/outbox', 'public');
+            } else {
+                return back()->withInput()->withErrors(['document' => 'Dokumen harus dalam bentuk pdf']);
+            }
+        }
+
         $data['date'] = $date->format('Y-m-d');
         $outbox->update($data);
 
-        return redirect()->route('outbox.edit', $outbox->id);
+        return redirect()->route('outbox.index');
     }
 
     /**

@@ -17,30 +17,6 @@ class CategoryController extends Controller
         //
     }
 
-
-    public function populate(Request $request){
-        $data = Category::all();
-
-        if ($q = $request->input('q')) {
-            $data = Category::whereRaw("UPPER(TRIM(name)) LIKE UPPER(TRIM('%{$q}%'))", [$q])
-                ->orWherRaw("UPPER(TRIM(code)) LIKE UPPER(TRIM('%{$q}%'))", [$q])
-                ->get();
-        }
-
-        $i = 0;
-        $rows = array();
-
-        foreach ($data as $row) {
-            $rows[$i]['id'] = $row->id;
-            $rows[$i]['text'] = $row->code ." - ". $row->name;
-            $i++;
-        }
-
-        return [
-            'items' => $rows
-        ];
-    }
-
     /**
      * Show the form for creating a new resource.
      *
@@ -105,5 +81,37 @@ class CategoryController extends Controller
     public function destroy(Category $category)
     {
         //
+    }
+
+
+    // API
+    public function populate(Request $request)
+    {
+        $data = Category::all();
+
+        if ($q = $request->input('q')) {
+            $data = Category::whereRaw("UPPER(TRIM(name)) LIKE UPPER(TRIM('%{$q}%'))", [$q])
+                ->orWherRaw("UPPER(TRIM(code)) LIKE UPPER(TRIM('%{$q}%'))", [$q])
+                ->get();
+        }
+
+        $i = 0;
+        $rows = array();
+
+        foreach ($data as $row) {
+            $rows[$i]['id'] = $row->id;
+            $rows[$i]['text'] = $row->code . " - " . $row->name;
+            $i++;
+        }
+
+        return [
+            'items' => $rows
+        ];
+    }
+
+    public function detail(Request $request)
+    {
+        $category = Category::findOrFail($request->id);
+        return $category;
     }
 }

@@ -20,6 +20,7 @@ class Outbox extends Model
         'date',
         'subject',
         'destination',
+        'document',
         'category_id',
         'user_id',
     ];
@@ -33,5 +34,15 @@ class Outbox extends Model
     public function category()
     {
         return $this->hasOne(Category::class, 'id', 'category_id');
+    }
+
+    /**
+     * Get the user associated with the Outbox
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function user()
+    {
+        return $this->hasOne(User::class, 'id', 'user_id');
     }
 }

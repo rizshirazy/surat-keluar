@@ -75,6 +75,19 @@
                                 </div>
                             </div>
 
+                            <div class="col-md-12">
+                                <div id="card_desc" class="card bg-light my-3" style="display: none">
+                                    <div class="card-body">
+                                        <div id="spinner" style="display: none">
+                                            <div class="justify-content-center p-3 d-flex">
+                                                <div class="dot-spin"></div>
+                                            </div>
+                                        </div>
+                                        <div id="category_desc"></div>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
                         <div class="row mt-3">
                             <div class="col">
@@ -120,6 +133,33 @@
                 }
             }
         });
+
+        $('#category_id').change(function(){
+            const url = "{{ route('api.category.detail') }}";
+            let id = $('#category_id').val();
+
+            $.ajax({
+                type: 'POST',
+                data: `id=${id}`,
+                url: url,
+                dataType: "json",
+                statusCode: {
+                    404: function(){
+                        Swal.fire('Error', 'Data tidak ditemukan', 'error');
+                    }
+                },
+                beforeSend: function() {
+                    $('#card_desc').show();
+                    $('#spinner').show();
+                    $('#category_desc').text('');
+                },
+                success: function(data){
+                    $('#spinner').hide();
+                    $('#category_desc').text(data.description);
+                }
+            });
+        });
+        
     });
 </script>
 @endpush
