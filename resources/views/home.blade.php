@@ -1,10 +1,10 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container glass-effect">
+<div class="container">
     <div class="row justify-content-center">
         <div class="col-md-12">
-            <div class="card py-3" style="background-color: transparent; border:none">
+            <div class="card py-3">
                 <div class="card-body">
 
                     @php
@@ -44,7 +44,7 @@
                     <div class="row mt-5">
                         <div class="col-md-12">
                             <a href="{{ route('outbox.create') }}"
-                               class="btn btn-success px-4 my-3 float-right shadow">
+                               class="btn btn-success px-4 my-3 float-right">
                                 <i class="fas fa-plus-circle mr-3"></i> Tambah Surat Keluar</a>
                         </div>
 
@@ -54,7 +54,7 @@
                             $outboxes = App\Outbox::latest()->limit(5)->get();
                             @endphp
 
-                            <div class="card shadow">
+                            <div class="card">
                                 <div class="card-body">
                                     <h4 class="mb-3">5 Surat Keluar Terakhir</h4>
 
@@ -87,8 +87,6 @@
                                     </div>
                                 </div>
                             </div>
-
-
 
                         </div>
                     </div>

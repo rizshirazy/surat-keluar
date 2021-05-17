@@ -13,14 +13,15 @@
             <!-- Left Side Of Navbar -->
             <ul class="navbar-nav mr-auto">
                 @auth
-                <li class="nav-item">
-                    <a class="nav-link px-md-4" href="{{ route('outbox.index') }}">Surat Keluar</a>
+                <li class="nav-item {{ (request()->is('outbox*')) ? 'active' : '' }}">
+                    <a class="nav-link px-md-4"
+                       href="{{ route('outbox.index') }}">Surat Keluar</a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item ">
                     <a class="nav-link px-md-4" href="#">Kode Surat</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link px-md-4" href="#">Pengguna</a>
+                <li class="nav-item {{ (request()->is('user*')) ? 'active' : '' }}">
+                    <a class="nav-link px-md-4" href="{{ route('user.index') }}">Pengguna</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link px-md-4" href="#">Pengaturan</a>

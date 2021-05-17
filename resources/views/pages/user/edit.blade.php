@@ -8,21 +8,21 @@
 
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
-                        <h4>Tambah Surat Keluar</h4>
+                        <h4>Surat Keluar</h4>
                     </div>
 
-                    <form action="{{ route('outbox.store') }}" class="my-4" method="POST">
+                    <form action="{{ route('outbox.update', $data->id) }}" class="my-4" method="POST"
+                          enctype="multipart/form-data">
                         @csrf
+                        @method('PUT')
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="date">Tanggal Surat</label>
-                                    <input type="text" id="date" name="date"
-                                           class="form-control datepicker @error('date') is-invalid @enderror"
-                                           data-provide="datepicker"
-                                           value="{{ old('date') ?? date('d-m-Y')}} ">
+                                    <label for="reff">Nomor Surat</label>
+                                    <input type="text" name="reff" class="form-control" value="{{ $data->reff }}"
+                                           readonly>
 
-                                    @error('date')
+                                    @error('reff')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
@@ -32,9 +32,37 @@
 
                             <div class="col-md-6">
                                 <div class="form-group">
+                                    <label for="date">Tanggal Surat</label>
+                                    @if ($editableDate)
+                                    {{-- Jika tanggal bisa diedit --}}
+                                    <input type="text" id="date" name="date"
+                                           class="form-control datepicker @error('date') is-invalid @enderror"
+                                           data-provide="datepicker"
+                                           value="{{ old('date') ?? Carbon\Carbon::parse($data->date)->format('d-m-Y') }}">
+
+                                    @error('date')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+
+                                    @else
+                                    {{-- Jika tanggal tidak bisa diedit --}}
+                                    <input type="text" id="date" name="date"
+                                           class="form-control" readonly
+                                           value="{{ Carbon\Carbon::parse($data->date)->format('d-m-Y') }}">
+                                    @endif
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
                                     <label for="category_id">Kode Surat</label>
                                     <select name="category_id" id="category_id"
                                             class="form-control select2 @error('category_id') is-invalid @enderror">
+                                        <option value="{{$data->category['id']}}">
+                                            {{ $data->category['code']." - ".$data->category['name']}}
+                                        </option>
                                     </select>
 
                                     @error('category_id')
@@ -50,7 +78,7 @@
                                     <label for="subject">Perihal</label>
                                     <input type="text" id="subject" name="subject"
                                            class="form-control @error('subject') is-invalid @enderror"
-                                           value="{{ old('subject') }}">
+                                           value="{{ old('subject') ?? $data->subject }}">
 
                                     @error('subject')
                                     <span class="invalid-feedback" role="alert">
@@ -65,7 +93,7 @@
                                     <label for="destination">Tujuan</label>
                                     <input type="text" id="destination" name="destination"
                                            class="form-control @error('destination') is-invalid @enderror"
-                                           value="{{ old('destination') }}">
+                                           value="{{ old('destination') ?? $data->destination }}">
 
                                     @error('destination')
                                     <span class="invalid-feedback" role="alert">
@@ -75,8 +103,29 @@
                                 </div>
                             </div>
 
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="document">Dokumen</label>
+                                    @if ($data->document)
+                                    <a href="{{ Storage::url($data->document) }}" target="_blank"
+                                       class="btn btn-sm btn-light ml-2">Lihat Dokumen</a>
+                                    @endif
+                                    <input type="file" id="document" name="document"
+                                           class="form-control @error('document') is-invalid @enderror"
+                                           accept=".pdf" aria-describedby="fileHelpBlock">
+                                    <small id="fileHelpBlock" class="form-text text-muted">
+                                        Upload ulang hanya jika ingin mengganti dokumen.
+                                    </small>
+                                    @error('document')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+                                </div>
+                            </div>
+
                             <div class="col-md-12">
-                                <div id="card_desc" class="card bg-light my-3" style="display: none">
+                                <div id="card_desc" class="card bg-light mt-2 mb-3" style="display: none">
                                     <div class="card-body">
                                         <div id="spinner" style="display: none">
                                             <div class="justify-content-center p-3 d-flex">
@@ -92,9 +141,18 @@
                         <div class="row mt-3">
                             <div class="col">
                                 <button type="submit" class="btn btn-success px-3 mr-1">Simpan</button>
-                                <a href="{{ route('outbox.index') }}" class="btn btn-light px-3">Batal</a>
+                                <a href="{{ route('outbox.index') }}" class="btn btn-light px-3">Kembali</a>
+                                <button type="button" class="btn btn-outline-danger px-3"
+                                        onclick="onDelete()">
+                                    Hapus</button>
                             </div>
                         </div>
+                    </form>
+
+                    <form id="delete-item" action="{{ route('outbox.destroy', $data->id) }}" method="POST"
+                          class="d-none">
+                        @csrf
+                        @method('DELETE')
                     </form>
                 </div>
             </div>
@@ -106,6 +164,7 @@
 @push('script-after')
 <script>
     $(document).ready(function(){
+
         $('.datepicker').datepicker({
             format: 'dd-mm-yyyy',
             language: 'id',
@@ -159,7 +218,24 @@
                 }
             });
         });
-        
+
+        onDelete = () => {
+            swalDanger.fire({
+                title: 'Anda yakin untuk menghapus?',
+                text: 'Data yang telah dihapus tidak dapat dikembalikan!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: `Hapus`,
+                cancelButtonText: `Batal`,
+                reverseButtons: true,
+                focusConfirm: false,
+                }).then((result) => {
+                    if (result.isDenied) {
+                        $('#delete-item').submit();
+                    } 
+                }
+            )
+        }
     });
 </script>
 @endpush

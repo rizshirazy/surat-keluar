@@ -8,8 +8,8 @@
 
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
-                        <h3 class="">Surat Keluar</h3>
-                        <a href="{{ route('outbox.create') }}" class="btn btn-success px-4">Tambah Data</a>
+                        <h3 class="">Pengguna</h3>
+                        <a href="{{ route('user.create') }}" class="btn btn-success px-4">Tambah Data</a>
                     </div>
 
                     @include('includes.alert')
@@ -19,12 +19,10 @@
                             <table id="resultTable" class="table">
                                 <thead>
                                     <tr>
-                                        <th>Nomor Surat</th>
-                                        <th>Tanggal</th>
-                                        <th>Kode Surat</th>
-                                        <th>Perihal</th>
-                                        <th>Tujuan</th>
-                                        <th>Salinan</th>
+                                        <th>NIP</th>
+                                        <th>Nama</th>
+                                        <th>Jabatan</th>
+                                        <th>Status</th>
                                         <th>Aksi</th>
                                     </tr>
                                 </thead>
@@ -40,7 +38,7 @@
 @endsection
 
 @push('script-after')
-<script>
+{{-- <script>
     const dataTable = $('#resultTable').DataTable({
         processing: true,
         serverSide: true,
@@ -67,5 +65,5 @@
             [0, 'desc'],
         ]
     })
-</script>
+</script> --}}
 @endpush

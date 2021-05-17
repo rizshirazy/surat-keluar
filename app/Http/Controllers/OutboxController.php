@@ -155,9 +155,7 @@ class OutboxController extends Controller
             ]);
         }
 
-        return view('pages.outbox.show', [
-            'data' => $outbox
-        ]);
+        return redirect()->route('outbox.show', $outbox);
     }
 
     /**
