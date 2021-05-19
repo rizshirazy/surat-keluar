@@ -16,11 +16,12 @@
 
                     <div class="bg-white rounded mt-5">
                         <div class="table-responsive">
-                            <table id="resultTable" class="table">
+                            <table id="resultTable" class="table w-100">
                                 <thead>
                                     <tr>
                                         <th>NIP</th>
                                         <th>Nama</th>
+                                        <th>Email</th>
                                         <th>Jabatan</th>
                                         <th>Status</th>
                                         <th>Aksi</th>
@@ -38,7 +39,7 @@
 @endsection
 
 @push('script-after')
-{{-- <script>
+<script>
     const dataTable = $('#resultTable').DataTable({
         processing: true,
         serverSide: true,
@@ -49,21 +50,19 @@
             url: '{!! url()->current() !!}'
         },
         columns: [
-            { data : 'reff', name: 'reff' },
-            { data : 'date', name: 'date', width: '80' },
-            { data : 'category', name: 'category' },
-            { data : 'subject', name: 'subject', width: '200' },
-            { data : 'destination', name: 'destination', width: '200' },
-            { data : 'document', name: 'document', className: 'text-center' },
+            { data : 'nip', name: 'nip' },
+            { data : 'name', name: 'name' },
+            { data : 'email', name: 'email' },
+            { data : 'position', name: 'position' },
+            { data : 'is_active', name: 'is_active' },
             { data : 'action', name: 'action', className: 'text-right' },
         ],
         columnDefs: [
-            { orderable: false, targets: [5,6] }
+            { orderable: false, targets: [5] }
         ],
         order: [
-            [1, 'desc'],
-            [0, 'desc'],
+            [4, 'asc'],
         ]
     })
-</script> --}}
+</script>
 @endpush

@@ -19,6 +19,7 @@
                             <table id="resultTable" class="table">
                                 <thead>
                                     <tr>
+                                        <th>Index</th>
                                         <th>Nomor Surat</th>
                                         <th>Tanggal</th>
                                         <th>Kode Surat</th>
@@ -51,7 +52,8 @@
             url: '{!! url()->current() !!}'
         },
         columns: [
-            { data : 'reff', name: 'reff' },
+            { data : 'index', name: 'index', className: 'text-center' },
+            { data : 'reff', name: 'reff', width: '120' },
             { data : 'date', name: 'date', width: '80' },
             { data : 'category', name: 'category' },
             { data : 'subject', name: 'subject', width: '200' },
@@ -60,10 +62,10 @@
             { data : 'action', name: 'action', className: 'text-right' },
         ],
         columnDefs: [
-            { orderable: false, targets: [5,6] }
+            { orderable: false, targets: [6,7] }
         ],
         order: [
-            [1, 'desc'],
+            [2, 'desc'],
             [0, 'desc'],
         ]
     })

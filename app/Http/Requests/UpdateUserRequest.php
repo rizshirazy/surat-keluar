@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
-class CreateUserRequest extends FormRequest
+class UpdateUserRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,16 +24,15 @@ class CreateUserRequest extends FormRequest
      */
     public function rules()
     {
+        $user = $this->route('user');
+
         return [
             'name'              => 'required',
-            'email'             => 'required|unique:users,email|email',
-            'nip'               => 'required|unique:users,nip',
+            'email'             => 'required|unique:users,email,' . $user->id . '|email',
+            'nip'               => 'required|unique:users,nip,' . $user->id,
             'position'          => 'required',
             'is_active'         => 'required|in:Y,N',
             'is_admin'          => 'in:Y,N',
-            // 'password'          => 'required|min:8',
-            // 'password_confirm'  => 'required|same:password',
-
         ];
     }
 

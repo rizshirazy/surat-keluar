@@ -8,21 +8,21 @@
 
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
-                        <h4>Surat Keluar</h4>
+                        <h4>Edit Pengguna</h4>
                     </div>
 
-                    <form action="{{ route('outbox.update', $data->id) }}" class="my-4" method="POST"
-                          enctype="multipart/form-data">
+                    <form action="{{ route('user.update', $data->id) }}" class="my-4" method="POST" autocomplete="off">
                         @csrf
                         @method('PUT')
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="reff">Nomor Surat</label>
-                                    <input type="text" name="reff" class="form-control" value="{{ $data->reff }}"
-                                           readonly>
+                                    <label for="nip">NIP</label>
+                                    <input type="text" id="nip" name="nip"
+                                           class="form-control @error('nip') is-invalid @enderror"
+                                           value="{{ old('nip') ?? $data->nip }}">
 
-                                    @error('reff')
+                                    @error('nip')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
@@ -32,40 +32,59 @@
 
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="date">Tanggal Surat</label>
-                                    @if ($editableDate)
-                                    {{-- Jika tanggal bisa diedit --}}
-                                    <input type="text" id="date" name="date"
-                                           class="form-control datepicker @error('date') is-invalid @enderror"
-                                           data-provide="datepicker"
-                                           value="{{ old('date') ?? Carbon\Carbon::parse($data->date)->format('d-m-Y') }}">
+                                    <label for="name">Nama</label>
+                                    <input type="text" id="name" name="name"
+                                           class="form-control @error('name') is-invalid @enderror"
+                                           value="{{ old('name') ?? $data->name }}">
 
-                                    @error('date')
+                                    @error('name')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
                                     @enderror
-
-                                    @else
-                                    {{-- Jika tanggal tidak bisa diedit --}}
-                                    <input type="text" id="date" name="date"
-                                           class="form-control" readonly
-                                           value="{{ Carbon\Carbon::parse($data->date)->format('d-m-Y') }}">
-                                    @endif
                                 </div>
                             </div>
 
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="category_id">Kode Surat</label>
-                                    <select name="category_id" id="category_id"
-                                            class="form-control select2 @error('category_id') is-invalid @enderror">
-                                        <option value="{{$data->category['id']}}">
-                                            {{ $data->category['code']." - ".$data->category['name']}}
+                                    <label for="position">Jabatan</label>
+                                    <input type="text" id="position" name="position"
+                                           class="form-control @error('position') is-invalid @enderror"
+                                           value="{{ old('position') ?? $data->position }}">
+
+                                    @error('position')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="email">Email</label>
+                                    <input type="text" id="email" name="email"
+                                           class="form-control @error('email') is-invalid @enderror"
+                                           value="{{ old('email') ?? $data->email }}">
+
+                                    @error('email')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="is_active">Status</label>
+                                    <select name="is_active" id="is_active" class="form-control select2">
+                                        <option value="N" @if ($data->is_active == 'N') selected @endif>Tidak Aktif
                                         </option>
+                                        <option value="Y" @if ($data->is_active == 'Y') selected @endif>Aktif</option>
                                     </select>
 
-                                    @error('category_id')
+                                    @error('is_active')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
@@ -75,12 +94,14 @@
 
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="subject">Perihal</label>
-                                    <input type="text" id="subject" name="subject"
-                                           class="form-control @error('subject') is-invalid @enderror"
-                                           value="{{ old('subject') ?? $data->subject }}">
+                                    <label for="is_admin">Admin</label>
+                                    <select name="is_admin" id="is_admin" class="form-control select2">
+                                        <option value="N" @if ($data->is_admin == 'N') selected @endif>Tidak
+                                        </option>
+                                        <option value="Y" @if ($data->is_admin == 'Y') selected @endif>Ya</option>
+                                    </select>
 
-                                    @error('subject')
+                                    @error('is_admin')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
@@ -90,50 +111,18 @@
 
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="destination">Tujuan</label>
-                                    <input type="text" id="destination" name="destination"
-                                           class="form-control @error('destination') is-invalid @enderror"
-                                           value="{{ old('destination') ?? $data->destination }}">
+                                    <label for="department_id">Departemen</label>
+                                    <select name="department_id" id="department_id" class="form-control select2">
+                                        <option value=""></option>
+                                        <option value="1">Kesekretariatan</option>
+                                        <option value="2">Kepaniteraan</option>
+                                    </select>
 
-                                    @error('destination')
+                                    @error('department_id')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
                                     @enderror
-                                </div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="document">Dokumen</label>
-                                    @if ($data->document)
-                                    <a href="{{ Storage::url($data->document) }}" target="_blank"
-                                       class="btn btn-sm btn-light ml-2">Lihat Dokumen</a>
-                                    @endif
-                                    <input type="file" id="document" name="document"
-                                           class="form-control @error('document') is-invalid @enderror"
-                                           accept=".pdf" aria-describedby="fileHelpBlock">
-                                    <small id="fileHelpBlock" class="form-text text-muted">
-                                        Upload ulang hanya jika ingin mengganti dokumen.
-                                    </small>
-                                    @error('document')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                    @enderror
-                                </div>
-                            </div>
-
-                            <div class="col-md-12">
-                                <div id="card_desc" class="card bg-light mt-2 mb-3" style="display: none">
-                                    <div class="card-body">
-                                        <div id="spinner" style="display: none">
-                                            <div class="justify-content-center p-3 d-flex">
-                                                <div class="dot-spin"></div>
-                                            </div>
-                                        </div>
-                                        <div id="category_desc"></div>
-                                    </div>
                                 </div>
                             </div>
 
@@ -141,18 +130,9 @@
                         <div class="row mt-3">
                             <div class="col">
                                 <button type="submit" class="btn btn-success px-3 mr-1">Simpan</button>
-                                <a href="{{ route('outbox.index') }}" class="btn btn-light px-3">Kembali</a>
-                                <button type="button" class="btn btn-outline-danger px-3"
-                                        onclick="onDelete()">
-                                    Hapus</button>
+                                <a href="{{ route('user.index') }}" class="btn btn-light px-3">Batal</a>
                             </div>
                         </div>
-                    </form>
-
-                    <form id="delete-item" action="{{ route('outbox.destroy', $data->id) }}" method="POST"
-                          class="d-none">
-                        @csrf
-                        @method('DELETE')
                     </form>
                 </div>
             </div>
@@ -164,7 +144,6 @@
 @push('script-after')
 <script>
     $(document).ready(function(){
-
         $('.datepicker').datepicker({
             format: 'dd-mm-yyyy',
             language: 'id',
@@ -172,6 +151,8 @@
             todayHighlight: true,
             daysOfWeekHighlighted: [0],
         });
+
+        $('.select2').select2();
 
         $('#category_id').select2({
             ajax: {
@@ -218,24 +199,7 @@
                 }
             });
         });
-
-        onDelete = () => {
-            swalDanger.fire({
-                title: 'Anda yakin untuk menghapus?',
-                text: 'Data yang telah dihapus tidak dapat dikembalikan!',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: `Hapus`,
-                cancelButtonText: `Batal`,
-                reverseButtons: true,
-                focusConfirm: false,
-                }).then((result) => {
-                    if (result.isDenied) {
-                        $('#delete-item').submit();
-                    } 
-                }
-            )
-        }
+        
     });
 </script>
 @endpush

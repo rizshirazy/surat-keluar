@@ -13,7 +13,7 @@
 
                     @include('includes.error')
 
-                    <form action="{{ route('user.store') }}" class="my-4" method="POST">
+                    <form action="{{ route('user.store') }}" class="my-4" method="POST" autocomplete="off">
                         @csrf
                         <div class="row">
                             <div class="col-md-6">
@@ -109,47 +109,48 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-6">
+                            {{-- <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="password">Password</label>
                                     <input type="password" id="password" name="password"
+                                           autocomplete="off"
                                            class="form-control @error('password') is-invalid @enderror">
 
                                     @error('password')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
-                                    </span>
-                                    @enderror
-                                </div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="password_confirm">Konfirmasi Password</label>
-                                    <input type="password" id="password_confirm" name="password_confirm"
-                                           class="form-control @error('password_confirm') is-invalid @enderror">
-
-                                    @error('password_confirm')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                    @enderror
-                                </div>
-                            </div>
-
-
+                            </span>
+                            @enderror
                         </div>
-                        <div class="row mt-3">
-                            <div class="col">
-                                <button type="submit" class="btn btn-success px-3 mr-1">Simpan</button>
-                                <a href="{{ route('user.index') }}" class="btn btn-light px-3">Batal</a>
-                            </div>
-                        </div>
-                    </form>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="password_confirm">Konfirmasi Password</label>
+                        <input type="password" id="password_confirm" name="password_confirm"
+                               class="form-control @error('password_confirm') is-invalid @enderror">
+
+                        @error('password_confirm')
+                        <span class="invalid-feedback" role="alert">
+                            <strong>{{ $message }}</strong>
+                        </span>
+                        @enderror
+                    </div>
+                </div> --}}
+
+
+            </div>
+            <div class="row mt-3">
+                <div class="col">
+                    <button type="submit" class="btn btn-success px-3 mr-1">Simpan</button>
+                    <a href="{{ route('user.index') }}" class="btn btn-light px-3">Batal</a>
                 </div>
             </div>
+            </form>
         </div>
     </div>
+</div>
+</div>
 </div>
 @endsection
 
@@ -186,32 +187,6 @@
             }
         });
 
-        $('#category_id').change(function(){
-            const url = "{{ route('api.category.detail') }}";
-            let id = $('#category_id').val();
-
-            $.ajax({
-                type: 'POST',
-                data: `id=${id}`,
-                url: url,
-                dataType: "json",
-                statusCode: {
-                    404: function(){
-                        Swal.fire('Error', 'Data tidak ditemukan', 'error');
-                    }
-                },
-                beforeSend: function() {
-                    $('#card_desc').show();
-                    $('#spinner').show();
-                    $('#category_desc').text('');
-                },
-                success: function(data){
-                    $('#spinner').hide();
-                    $('#category_desc').text(data.description);
-                }
-            });
-        });
-        
     });
 </script>
 @endpush

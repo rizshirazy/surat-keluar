@@ -4,7 +4,7 @@
 <div class="container">
     <div class="row justify-content-center align-items-center" style="height: 90vh">
         <div class="col-md-7 col-sm-12">
-            <div class="card p-3 glass-effect" style="background-color: transparent; border:none">
+            <div class="card p-3">
                 <div class="card-body">
                     <div class="d-flex justify-content-center">
                         <img src="{{ asset('images/logo.png')}}" alt="" style="width: 10em;">

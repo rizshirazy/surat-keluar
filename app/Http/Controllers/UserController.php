@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateUserRequest;
+use App\Http\Requests\UpdateUserRequest;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Yajra\DataTables\Facades\DataTables;
 
 class UserController extends Controller
 {
@@ -16,6 +19,29 @@ class UserController extends Controller
      */
     public function index()
     {
+        if (request()->ajax()) {
+            $query = User::query();
+
+            return DataTables::of($query)
+                ->editColumn('is_active', function ($item) {
+                    return  $item->is_active == 'Y' ? 'Aktif' : 'Tidak Aktif';
+                })
+                ->addColumn('action', function ($item) {
+                    $action = '';
+
+                    if (Auth::id() == $item->user_id) {
+                    }
+                    $action .=
+                        '<a href="' . route('user.edit', $item->id) . '" class="btn btn-light" title="Edit"><i class="fas fa-pencil-alt"></i></a>';
+
+                    $action .= '<a href="' . route('user.show', $item->id) . '" class="btn btn-light" title="Detail"><i class="fas fa-chevron-right"></i></a>';
+
+                    return '<div class="btn-group" role="group">' . $action . '</div>';
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        }
+
         return view('pages.user.index');
     }
 
@@ -39,15 +65,13 @@ class UserController extends Controller
     {
         $data = $request->all();
 
-        if (!$data['password']) {
-            $data['password'] = Hash::make('password');
-        }
+        $data['password'] = Hash::make('password');
+        $data['nip'] = str_replace(' ', '', $data['nip']);
 
-        $data['password'] = Hash::make($data['password']);
+        $user = User::create($data);
 
-        User::create($data);
-
-        return redirect()->route('user.index');
+        return redirect()->route('user.index')
+            ->with('success', 'Pengguna ' . $user->name . ' berhasil ditambah');
     }
 
     /**
@@ -56,9 +80,11 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(User $user)
     {
-        //
+        return view('pages.user.show', [
+            'data' => $user
+        ]);
     }
 
     /**
@@ -67,9 +93,11 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(User $user)
     {
-        //
+        return view('pages.user.edit', [
+            'data' => $user
+        ]);
     }
 
     /**
@@ -79,9 +107,14 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateUserRequest $request, User $user)
     {
-        //
+        $data = $request->all();
+        $data['nip'] = str_replace(' ', '', $data['nip']);
+        $user->update($data);
+
+        return redirect()->route('user.index')
+            ->with('success', 'Pengguna ' . $user->name . ' berhasil diperbarui');
     }
 
     /**

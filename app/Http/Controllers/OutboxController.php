@@ -28,6 +28,9 @@ class OutboxController extends Controller
                 ->editColumn('date', function ($item) {
                     return  date('d-m-Y', strtotime($item->date));
                 })
+                ->editColumn('index', function ($item) {
+                    return  $item->index . $item->suffix;
+                })
                 ->editColumn('document', function ($item) {
                     if ($item->document) {
                         return  '<a href="' . Storage::url($item->document) . '" target="_blank" class="btn btn-light text-danger" title="Lihat"><i class="fas fa-file-pdf"></i></a>';
@@ -77,47 +80,24 @@ class OutboxController extends Controller
     {
         $data = $request->all();
 
-        $today = Carbon::now()->startOfDay();
         $date = Carbon::parse($data['date']);
-        $suffix = null;
 
-        if ($date->lt($today)) {
-            $last_index = Outbox::where('date', '<=', $date->format('Y-m-d'))
-                ->whereYear('date', $date->year)
-                ->orderBy('index', 'desc')
-                ->orderBy('suffix', 'desc')
-                ->first();
-
-            if (!$last_index) {
-                $last_index = Outbox::whereYear('date', $date->year)
-                    ->orderBy('index', 'asc')
-                    ->orderBy('suffix', 'desc')
-                    ->first();
-            }
-
-            $next_index = $last_index ? $last_index->index : 1;
-
-            if ($last_index && $last_index->suffix) {
-                $suffix = Str::upper(++$last_index->suffix);
-            } else if ($last_index) {
-                $suffix = 'A';
-            }
-        } else {
-            $last_index = Outbox::whereYear('date', $date->year)->orderBy('index', 'desc')->first();
-            $next_index = $last_index ? $last_index->index + 1 : 1;
+        $last_index = $this->getLastIndex($data);
+        if ($last_index['message']) {
+            return back()->withInput()->withErrors(['date' => 'Tanggal belum efektif']);
         }
 
         $category = Category::findOrFail($data['category_id']);
 
-        $data['suffix'] = $suffix;
-        $data['reff'] = "W28-A4/" . $next_index . $suffix . "/" . $category->code . "/" . romanic_number($date->month) . "/" . $date->year;
+        $data['suffix'] = $last_index['suffix'];
+        $data['index'] = $last_index['index'];
+        $data['reff'] = "W28-A4/" . $last_index['index'] . $last_index['suffix'] . "/" . $category->code . "/" . romanic_number($date->month) . "/" . $date->year;
         $data['date'] = $date->format('Y-m-d');
-        $data['index'] = $next_index;
         $data['user_id'] = Auth::id();
 
         $outbox = Outbox::create($data);
 
-        return redirect()->route('outbox.edit', $outbox->id);
+        return redirect()->route('outbox.edit', $outbox->id)->with('success', 'Nomor Surat ' . $outbox->reff . ' berhasil dibuat!');
     }
 
     /**
@@ -144,7 +124,7 @@ class OutboxController extends Controller
         $outbox = Outbox::with('category')->findOrFail($outbox->id);
 
         $today = Carbon::now()->startOfDay();
-        $date = Carbon::parse($outbox->date);
+        $date = Carbon::parse($outbox->created_at);
 
         $editableDate = $today->lte($date);
 
@@ -169,48 +149,21 @@ class OutboxController extends Controller
     {
         $data = $request->all();
 
-        $today = Carbon::now()->startOfDay();
         $date = Carbon::parse($data['date']);
-
         $category = Category::findOrFail($data['category_id']);
 
         if ($date->format('Y-m-d') == $outbox->date) {
             $data['reff'] = "W28-A4/" . $outbox->index . $outbox->suffix . "/" . $category->code . "/" . romanic_number($date->month) . "/" . $date->year;
         } else {
-            $suffix = null;
+            $last_index = $this->getLastIndex($data);
 
-            if ($date->lt($today)) {
-
-                $last_index = Outbox::where('date', '<=', $date->format('Y-m-d'))
-                    ->where('id', '<>', $outbox->id)
-                    ->whereYear('date', $date->year)
-                    ->orderBy('index', 'desc')
-                    ->orderBy('suffix', 'desc')
-                    ->first();
-
-                if (!$last_index) {
-                    $last_index = Outbox::whereYear('date', $date->year)
-                        ->where('id', '<>', $outbox->id)
-                        ->orderBy('index', 'asc')
-                        ->orderBy('suffix', 'desc')
-                        ->first();
-                }
-
-                $next_index = $last_index ? $last_index->index : 1;
-
-                if ($last_index && $last_index->suffix) {
-                    $suffix = Str::upper(++$last_index->suffix);
-                } else if ($last_index) {
-                    $suffix = 'A';
-                }
-            } else {
-                $last_index = Outbox::whereYear('date', $date->year)->orderBy('index', 'desc')->first();
-                $next_index = $last_index ? $last_index->index + 1 : 1;
+            if ($last_index['message']) {
+                return back()->withInput()->withErrors(['date' => 'Tanggal belum efektif']);
             }
 
-            $data['suffix'] = $suffix;
-            $data['reff'] = "W28-A4/" . $next_index . $suffix . "/" . $category->code . "/" . romanic_number($date->month) . "/" . $date->year;
-            $data['index'] = $next_index;
+            $data['suffix'] = $last_index['suffix'];
+            $data['index'] = $last_index['index'];
+            $data['reff'] = "W28-A4/" . $last_index['index'] . $last_index['suffix'] . "/" . $category->code . "/" . romanic_number($date->month) . "/" . $date->year;
         }
 
         if ($file = $request->file('document')) {
@@ -227,7 +180,7 @@ class OutboxController extends Controller
         $data['date'] = $date->format('Y-m-d');
         $outbox->update($data);
 
-        return redirect()->route('outbox.index');
+        return redirect()->route('outbox.index')->with('success', 'Nomor Surat ' . $outbox->reff . ' berhasil diperbarui!');
     }
 
     /**
@@ -240,6 +193,72 @@ class OutboxController extends Controller
     {
         $outbox->delete();
 
-        return redirect()->route('outbox.index');
+        return redirect()->route('outbox.index')
+            ->with('danger', 'Nomor Surat ' . $outbox->reff . ' telah dihapus!');
+    }
+
+    private function getLastIndex($data)
+    {
+        $today = Carbon::now()->startOfDay();
+        $date = Carbon::parse($data['date']);
+        $suffix = null;
+
+        $result['message'] = null;
+
+        if ($date->gt($today)) {
+            $result['message'] = 'Tanggal belum efektif';
+        }
+
+        /**
+         * Kondisi penomoran index surat keluar:
+         * A. Jika surat keluar dibuat untuk tanggal yang telah lewat
+         *  A1. Jika ada surat keluar dari index terakhir, maka gunakan suffix
+         *    A2. Jika index terakhir menggunakan suffix, maka melanjutkan suffix
+         *    A3. Jika index terakhit tidak ada suffix, suffix di set menjadi "A"
+         *  A4. Jika tidak ada surat keluar dari index terakhir, maka melanjutkan penomoran
+         * B. Jika surat keluar dibuat di hari yang sama
+         * 
+         */
+
+        //  KONDISI: A
+        if ($date->lt($today)) {
+            $last_index = Outbox::where('date', '<=', $date->format('Y-m-d'))
+                ->whereYear('date', $date->year)
+                ->orderBy('index', 'desc')
+                ->orderBy('suffix', 'desc')
+                ->first();
+
+            if (!$last_index) {
+                $last_index = Outbox::whereYear('date', $date->year)
+                    ->orderBy('index', 'asc')
+                    ->orderBy('suffix', 'desc')
+                    ->first();
+            }
+
+            $countOutboxAfterLastIndex = Outbox::where('date', '>', $last_index->date)
+                ->count();
+
+            // KONDISI: A1
+            if ($countOutboxAfterLastIndex > 0) {
+
+                $next_index = $last_index ? $last_index->index : 1;
+                // KONDISI: A2
+                if ($last_index && $last_index->suffix) {
+                    $suffix = Str::upper(++$last_index->suffix);
+                } else if ($last_index) { // KONDISI: A3
+                    $suffix = 'A';
+                }
+            } else { //KONDISI: A4
+                $next_index = $last_index ? $last_index->index + 1 : 1;
+            }
+        } else { // KONDISI: B
+            $last_index = Outbox::whereYear('date', $date->year)->orderBy('index', 'desc')->first();
+            $next_index = $last_index ? $last_index->index + 1 : 1;
+        }
+
+        $result['index'] = $next_index;
+        $result['suffix'] = $suffix;
+
+        return $result;
     }
 }

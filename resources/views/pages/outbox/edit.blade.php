@@ -11,6 +11,8 @@
                         <h4>Surat Keluar</h4>
                     </div>
 
+                    @include('includes.alert')
+
                     <form action="{{ route('outbox.update', $data->id) }}" class="my-4" method="POST"
                           enctype="multipart/form-data">
                         @csrf
@@ -230,7 +232,7 @@
                 reverseButtons: true,
                 focusConfirm: false,
                 }).then((result) => {
-                    if (result.isDenied) {
+                    if (result.isConfirmed) {
                         $('#delete-item').submit();
                     } 
                 }
