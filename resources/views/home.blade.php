@@ -40,6 +40,32 @@
                         </div>
                     </div>
 
+                    <div class="row mt-5">
+                        <div class="col mx-5">
+                            <canvas id="groupCategoryChart"></canvas>
+                        </div>
+                    </div>
+
+                    @php
+                    $group = App\Outbox::select(App\Outbox::raw('count(1) as count'),
+                    'group_categories.name')->whereYear('date', date('Y'))
+                    ->join('categories', 'outboxes.category_id', '=', 'categories.id')
+                    ->join('group_categories', 'group_categories.id', '=', 'categories.group_category_id')
+                    ->groupBy('group_categories.name')->get();
+
+                    $label = [];
+                    $value = [];
+
+                    foreach ($group as $key) {
+                    $label = array_merge($label, [$key->name]);
+                    $value = array_merge($value, [$key->count]);
+                    }
+
+                    $label = json_encode($label);
+                    $value = json_encode($value);
+
+                    @endphp
+
 
                     <div class="row mt-5">
                         <div class="col-md-12">
@@ -96,3 +122,67 @@
     </div>
 </div>
 @endsection
+
+@push('script-after')
+<script>
+    const ctx = document.getElementById('groupCategoryChart');
+    const myChart = new Chart(ctx, {
+        type: 'bar',
+        responsive: true,
+        data: {
+            labels: {!! $label !!},
+            datasets: [{
+                label: 'Kuantitas ',
+                data: {!! $value !!},
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.5)',
+                    'rgba(54, 162, 235, 0.5)',
+                    'rgba(255, 206, 86, 0.5)',
+                    'rgba(75, 192, 192, 0.5)',
+                    'rgba(153, 102, 255, 0.5)',
+                    'rgba(255, 159, 64, 0.5)',
+                    'rgba(255, 99, 132, 0.5)',
+                    'rgba(54, 162, 235, 0.5)',
+                    'rgba(255, 206, 86, 0.5)',
+                    'rgba(75, 192, 192, 0.5)',
+                    'rgba(153, 102, 255, 0.5)',
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)',
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                ],
+                borderWidth: 2,
+                borderRadius: 5,
+            }]
+        },
+        options: {
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Jumlah Surat Keluar Berdasarkan Klasifikasi Tahun '+ <?= date('Y ') ?>
+                },
+                legend: {
+                    display: false,
+                },
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 0
+                    }
+                },
+            }
+        }
+    });
+</script>
+@endpush
