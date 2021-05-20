@@ -113,9 +113,9 @@
                                 <div class="form-group">
                                     <label for="department_id">Departemen</label>
                                     <select name="department_id" id="department_id" class="form-control select2">
-                                        <option value=""></option>
-                                        <option value="1">Kesekretariatan</option>
-                                        <option value="2">Kepaniteraan</option>
+                                        @if ($data->department)
+                                        <option value="{{ $data->department_id}}">{{ $data->department->name }}</option>
+                                        @endif
                                     </select>
 
                                     @error('department_id')
@@ -198,6 +198,26 @@
                     $('#category_desc').text(data.description);
                 }
             });
+        });
+
+        $('#department_id').select2({
+            ajax: {
+                placeholder: '-- Pilih --',
+                    dalay: 100,
+                        url: '{{ route('api.department.populate') }}',
+                        dataType: 'json',
+                        type: 'POST',
+                        data: function (params){
+                        return {
+                            q: params.term,
+                            };
+                        },
+                        processResults: function (data) {
+                        return {
+                        results: data.items
+                    };
+                }
+            }
         });
         
     });

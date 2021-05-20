@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Category;
+use App\Http\Requests\CreateCategoryRequest;
 use Illuminate\Http\Request;
+use Yajra\DataTables\Facades\DataTables;
 
 class CategoryController extends Controller
 {
@@ -14,7 +16,26 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        //
+        if (request()->ajax()) {
+            $query = Category::query();
+
+            return DataTables::of($query)
+                ->addColumn('group', function ($item) {
+                    return $item->group ? $item->group->name : '';
+                })
+                ->addColumn('action', function ($item) {
+                    $action = '';
+
+                    $action .=
+                        '<a href="' . route('category.edit', $item->id) . '" class="btn btn-light" title="Edit"><i class="fas fa-pencil-alt"></i></a>';
+
+                    return '<div class="btn-group" role="group">' . $action . '</div>';
+                })
+                ->rawColumns(['action', 'description'])
+                ->make(true);
+        }
+
+        return view('pages.category.index');
     }
 
     /**
@@ -24,7 +45,7 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        //
+        return view('pages.category.create');
     }
 
     /**
@@ -33,9 +54,13 @@ class CategoryController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CreateCategoryRequest $request)
     {
-        //
+        $data = $request->all();
+
+        $category = Category::create($data);
+
+        return redirect()->route('category.index')->with('success', 'Kode Surat ' . $category->code . ' berhasil dibuat.');
     }
 
     /**
@@ -46,7 +71,7 @@ class CategoryController extends Controller
      */
     public function show(Category $category)
     {
-        //
+        abort(404);
     }
 
     /**
@@ -57,7 +82,7 @@ class CategoryController extends Controller
      */
     public function edit(Category $category)
     {
-        //
+        return view('pages.category.edit', ['data' => $category]);
     }
 
     /**
@@ -67,9 +92,13 @@ class CategoryController extends Controller
      * @param  \App\Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Category $category)
+    public function update(CreateCategoryRequest $request, Category $category)
     {
-        //
+        $data = $request->all();
+
+        $category->update($data);
+
+        return redirect()->route('category.index')->with('success', 'Kode Surat ' . $category->code . ' berhasil diperbarui.');
     }
 
     /**
@@ -80,7 +109,10 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
-        //
+        $category->delete();
+
+        return redirect()->route('category.index')
+            ->with('success', 'Kode Surat ' . $category->code . ' telah dihapus!');
     }
 
 

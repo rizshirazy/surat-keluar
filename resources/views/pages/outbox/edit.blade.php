@@ -144,7 +144,7 @@
                             <div class="col">
                                 <button type="submit" class="btn btn-success px-3 mr-1">Simpan</button>
                                 <a href="{{ route('outbox.index') }}" class="btn btn-light px-3">Kembali</a>
-                                <button type="button" class="btn btn-outline-danger px-3"
+                                <button type="button" class="btn btn-outline-danger px-3 float-right"
                                         onclick="onDelete()">
                                     Hapus</button>
                             </div>

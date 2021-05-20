@@ -194,10 +194,10 @@ class OutboxController extends Controller
         $outbox->delete();
 
         return redirect()->route('outbox.index')
-            ->with('danger', 'Nomor Surat ' . $outbox->reff . ' telah dihapus!');
+            ->with('success', 'Nomor Surat ' . $outbox->reff . ' telah dihapus!');
     }
 
-    private function getLastIndex($data)
+    private function getLastIndex($data, $outbox = null)
     {
         $today = Carbon::now()->startOfDay();
         $date = Carbon::parse($data['date']);
@@ -235,8 +235,11 @@ class OutboxController extends Controller
                     ->first();
             }
 
-            $countOutboxAfterLastIndex = Outbox::where('date', '>', $last_index->date)
-                ->count();
+            $countOutboxAfterLastIndex = 0;
+            if ($last_index) {
+                $countOutboxAfterLastIndex = Outbox::where('date', '>', $last_index->date)
+                    ->count();
+            }
 
             // KONDISI: A1
             if ($countOutboxAfterLastIndex > 0) {

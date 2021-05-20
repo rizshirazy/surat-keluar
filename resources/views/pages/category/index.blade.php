@@ -8,8 +8,8 @@
 
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
-                        <h3 class="">Pengguna</h3>
-                        <a href="{{ route('user.create') }}" class="btn btn-success px-4">Tambah Data</a>
+                        <h3 class="">Kode Surat</h3>
+                        <a href="{{ route('category.create') }}" class="btn btn-success px-4">Tambah Data</a>
                     </div>
 
                     @include('includes.alert')
@@ -19,11 +19,10 @@
                             <table id="resultTable" class="table w-100">
                                 <thead>
                                     <tr>
-                                        <th>NIP</th>
-                                        <th>Nama</th>
-                                        <th>Email</th>
-                                        <th>Jabatan</th>
-                                        <th>Status</th>
+                                        <th>Kelompok</th>
+                                        <th>Kode</th>
+                                        <th>Keterangan</th>
+                                        <th>Deskripsi</th>
                                         <th>Aksi</th>
                                     </tr>
                                 </thead>
@@ -50,18 +49,16 @@
             url: '{!! url()->current() !!}'
         },
         columns: [
-            { data : 'nip', name: 'nip' },
+            { data : 'group', name: 'group' },
+            { data : 'code', name: 'code' },
             { data : 'name', name: 'name' },
-            { data : 'email', name: 'email' },
-            { data : 'position', name: 'position' },
-            { data : 'is_active', name: 'is_active' },
+            { data : 'description', name: 'description' },
             { data : 'action', name: 'action', className: 'text-right' },
         ],
         columnDefs: [
-            { orderable: false, targets: [5] }
+            { orderable: false, targets: [4] }
         ],
         order: [
-            [4, 'desc'],
             [1, 'asc'],
         ]
     })

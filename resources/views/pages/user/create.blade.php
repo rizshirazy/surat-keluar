@@ -79,7 +79,8 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="is_active">Status</label>
-                                    <select name="is_active" id="is_active" class="form-control select2">
+                                    <select name="is_active" id="is_active"
+                                            class="form-control select2 @error('is_active') is-invalid @enderror">
                                         <option value="N">Tidak Aktif</option>
                                         <option value="Y">Aktif</option>
                                     </select>
@@ -95,10 +96,8 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="department_id">Departemen</label>
-                                    <select name="department_id" id="department_id" class="form-control select2">
-                                        <option value=""></option>
-                                        <option value="1">Kesekretariatan</option>
-                                        <option value="2">Kepaniteraan</option>
+                                    <select name="department_id" id="department_id"
+                                            class="form-control select2 @error('department_id') is-invalid @enderror">
                                     </select>
 
                                     @error('department_id')
@@ -109,48 +108,19 @@
                                 </div>
                             </div>
 
-                            {{-- <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="password">Password</label>
-                                    <input type="password" id="password" name="password"
-                                           autocomplete="off"
-                                           class="form-control @error('password') is-invalid @enderror">
 
-                                    @error('password')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                            </span>
-                            @enderror
                         </div>
-                </div>
-
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="password_confirm">Konfirmasi Password</label>
-                        <input type="password" id="password_confirm" name="password_confirm"
-                               class="form-control @error('password_confirm') is-invalid @enderror">
-
-                        @error('password_confirm')
-                        <span class="invalid-feedback" role="alert">
-                            <strong>{{ $message }}</strong>
-                        </span>
-                        @enderror
-                    </div>
-                </div> --}}
-
-
-            </div>
-            <div class="row mt-3">
-                <div class="col">
-                    <button type="submit" class="btn btn-success px-3 mr-1">Simpan</button>
-                    <a href="{{ route('user.index') }}" class="btn btn-light px-3">Batal</a>
+                        <div class="row mt-3">
+                            <div class="col">
+                                <button type="submit" class="btn btn-success px-3 mr-1">Simpan</button>
+                                <a href="{{ route('user.index') }}" class="btn btn-light px-3">Batal</a>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
-            </form>
         </div>
     </div>
-</div>
-</div>
 </div>
 @endsection
 
@@ -172,6 +142,26 @@
                 placeholder: '-- Pilih --',
                     dalay: 100,
                         url: '{{ route('api.category.populate') }}',
+                        dataType: 'json',
+                        type: 'POST',
+                        data: function (params){
+                        return {
+                            q: params.term,
+                            };
+                        },
+                        processResults: function (data) {
+                        return {
+                        results: data.items
+                    };
+                }
+            }
+        });
+
+        $('#department_id').select2({
+            ajax: {
+                placeholder: '-- Pilih --',
+                    dalay: 100,
+                        url: '{{ route('api.department.populate') }}',
                         dataType: 'json',
                         type: 'POST',
                         data: function (params){

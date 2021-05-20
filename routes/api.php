@@ -20,3 +20,5 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::post('category/populate', 'CategoryController@populate')->name('api.category.populate');
 Route::post('category/detail', 'CategoryController@detail')->name('api.category.detail');
+Route::post('group-category/populate', 'GroupCategoryController@populate')->name('api.group_category.populate');
+Route::post('department/populate', 'DepartmentController@populate')->name('api.department.populate');

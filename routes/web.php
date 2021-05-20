@@ -26,5 +26,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/', 'HomeController@index')->name('home');
 
     Route::resource('outbox', 'OutboxController')->names('outbox');
+    Route::resource('category', 'CategoryController')->names('category');
     Route::resource('user', 'UserController')->names('user');
 });
