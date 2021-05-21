@@ -9,8 +9,13 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
                         <h3 class="">Surat Keluar</h3>
-                        <a href="{{ route('outbox.create') }}" class="btn btn-success px-4">Tambah Data</a>
+                        <div>
+                            <a href="{{ route('outbox.create') }}" class="btn btn-success px-4">Tambah Data</a>
+                            <button onclick="showModal('report', 1)" class="btn btn-warning px-4">Laporan</button>
+                        </div>
                     </div>
+
+
 
                     @include('includes.alert')
 
@@ -69,5 +74,32 @@
             [0, 'desc'],
         ]
     })
+
+    function showModal(type, id) {
+        $("#mainModal").modal({backdrop: "static", keyboard: false});
+        $("#mainModal .data").html('<div class="justify-content-center p-5 d-flex"><div class="dot-spin"></div></div>');
+        $.ajax({
+            type: "POST",
+            url: '{{ route('outbox.modal') }}',
+            data: "_token={{ csrf_token() }}&id=" + id + "&type=" + type + "",
+            success: function (data) {
+                $("#mainModal .data").html(data);
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                $('#mainModal').modal('hide');
+                console.error(xhr);
+                Swal.fire('Error', ajaxOptions + " - " + thrownError, 'error');
+            }
+        });
+    }
+
+    function sizeModal(type) { //type = full, lg, sm, default
+        $("#mainModal .modal-dialog").removeClass("modal-full modal-lg modal-sm");
+        if (type != "default") {
+            $("#mainModal .modal-dialog").addClass("modal-" + type);
+        }
+    }
+
+
 </script>
 @endpush

@@ -3,13 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Category;
+use App\Exports\OutboxesExport;
 use App\Http\Requests\CreateOutboxRequest;
 use App\Http\Requests\UpdateOutboxRequest;
 use App\Outbox;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 
 class OutboxController extends Controller
@@ -197,6 +200,11 @@ class OutboxController extends Controller
             ->with('success', 'Nomor Surat ' . $outbox->reff . ' telah dihapus!');
     }
 
+    public function report()
+    {
+        return Excel::download(new OutboxesExport, 'surat-keluar.xlsx');
+    }
+
     private function getLastIndex($data, $outbox = null)
     {
         $today = Carbon::now()->startOfDay();
@@ -263,5 +271,17 @@ class OutboxController extends Controller
         $result['suffix'] = $suffix;
 
         return $result;
+    }
+
+    public function modal(Request $request)
+    {
+        $id = $request->input('id');
+        $type = $request->input('type');
+
+        switch ($type) {
+            case 'report':
+                return view('pages.outbox.modal-report');
+                break;
+        }
     }
 }

@@ -19,7 +19,7 @@
                             <table id="resultTable" class="table w-100">
                                 <thead>
                                     <tr>
-                                        <th>Kelompok</th>
+                                        <th>Klasifikasi</th>
                                         <th>Kode</th>
                                         <th>Keterangan</th>
                                         <th>Deskripsi</th>

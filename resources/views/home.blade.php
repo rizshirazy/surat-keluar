@@ -24,8 +24,10 @@
                         <div class="col-md-4">
                             <div class="card text-white shadow" style="border: none; background-color: #ef476f">
                                 <div class="card-body">
-                                    <span>Surat Keluar Seluruhnya</span>
-                                    <h3 class="mt-2">{{ App\Outbox::count() }}</h3>
+                                    <span>Surat Keluar Bulan Ini</span>
+                                    <h3 class="mt-2">
+                                        {{ App\Outbox::whereYear('date', date('Y'))->whereMonth('date', date('m'))->count() }}
+                                    </h3>
                                 </div>
                             </div>
                         </div>
@@ -34,7 +36,9 @@
                             <div class="card shadow" style="border: none; background-color: #ffd166">
                                 <div class="card-body">
                                     <span>Surat Keluar Tanpa Salinan</span>
-                                    <h3 class="mt-2">{{ App\Outbox::whereNull('document')->count() }}</h3>
+                                    <h3 class="mt-2">
+                                        {{ App\Outbox::whereYear('date', date('Y'))->whereNull('document')->count() }}
+                                    </h3>
                                 </div>
                             </div>
                         </div>
