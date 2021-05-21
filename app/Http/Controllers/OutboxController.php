@@ -202,7 +202,10 @@ class OutboxController extends Controller
 
     public function report()
     {
-        return Excel::download(new OutboxesExport, 'surat-keluar.xlsx');
+        $start_date = null;
+        $end_date = null;
+
+        return new OutboxesExport($start_date, $end_date);
     }
 
     private function getLastIndex($data, $outbox = null)
