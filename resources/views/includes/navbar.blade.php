@@ -13,6 +13,10 @@
             <!-- Left Side Of Navbar -->
             <ul class="navbar-nav mr-auto">
                 @auth
+                <li class="nav-item {{ (request()->is('inbox*')) ? 'active' : '' }}">
+                    <a class="nav-link px-md-4"
+                       href="{{ route('inbox.index') }}">Surat Masuk</a>
+                </li>
                 <li class="nav-item {{ (request()->is('outbox*')) ? 'active' : '' }}">
                     <a class="nav-link px-md-4"
                        href="{{ route('outbox.index') }}">Surat Keluar</a>
