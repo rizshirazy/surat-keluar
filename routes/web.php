@@ -30,10 +30,14 @@ Route::middleware(['auth'])->group(function () {
     Route::post('outbox/report', 'OutboxController@report')->name('outbox.report');
 
     Route::resource('inbox', 'InboxController')->names('inbox');
+
     Route::prefix('disposition')->group(function () {
         Route::post('create', 'DispositionController@store')->name('disposition.store');
+        Route::get('view/{id}', 'DispositionController@show')->name('disposition.show');
     });
 
     Route::resource('category', 'CategoryController')->names('category');
     Route::resource('user', 'UserController')->names('user');
+
+    Route::get('disposition/populate', 'DispositionController@populateByUser')->name('disposition.populate_by_user');
 });

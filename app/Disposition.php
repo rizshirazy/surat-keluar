@@ -30,4 +30,14 @@ class Disposition extends Model
     {
         return $this->hasOne(User::class, 'id', 'user_id');
     }
+
+    /**
+     * Get the mail associated with the Disposition
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function mail()
+    {
+        return $this->hasOne(Inbox::class, 'id', 'mail_id');
+    }
 }

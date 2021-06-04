@@ -52,4 +52,14 @@ class Inbox extends Model
     {
         return $this->hasOne(Type::class, 'id', 'type_id');
     }
+
+    /**
+     * Get all of the disposition for the Inbox
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function disposition()
+    {
+        return $this->hasMany(Disposition::class, 'mail_id', 'id');
+    }
 }
