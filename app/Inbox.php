@@ -20,6 +20,7 @@ class Inbox extends Model
         'type_id',
         'user_id',
         'document',
+        'status',
     ];
 
     /**

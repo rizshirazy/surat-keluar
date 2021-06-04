@@ -30,6 +30,7 @@
                                         <th>Kode Surat</th>
                                         <th>Perihal</th>
                                         <th>Asal</th>
+                                        <th>Status</th>
                                         <th>Dokumen</th>
                                         <th>Aksi</th>
                                     </tr>
@@ -63,6 +64,7 @@
             { data : 'category', name: 'category' },
             { data : 'subject', name: 'subject', width: '200' },
             { data : 'origin', name: 'origin', width: '200' },
+            { data : 'status', name: 'status' },
             { data : 'document', name: 'document', className: 'text-center' },
             { data : 'action', name: 'action', className: 'text-right' },
         ],

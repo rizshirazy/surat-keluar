@@ -13,7 +13,8 @@
 
                     @include('includes.alert')
 
-                    <form action="{{ route('inbox.update', $data->id) }}" class="my-4" method="POST"
+                    {{-- FORM INBOX UPDATE --}}
+                    <form id="inboxes-form" action="{{ route('inbox.update', $data->id) }}" class="my-4" method="POST"
                           enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
@@ -162,24 +163,61 @@
                                     </div>
                                 </div>
                             </div>
-
-                        </div>
-                        <div class="row mt-3">
-                            <div class="col">
-                                <button type="submit" class="btn btn-success px-3 mr-1">Simpan</button>
-                                <a href="{{ route('inbox.index') }}" class="btn btn-light px-3">Kembali</a>
-                                <button type="button" class="btn btn-outline-danger px-3 float-right"
-                                        onclick="onDelete()">
-                                    Hapus</button>
-                            </div>
                         </div>
                     </form>
 
+                    {{-- FORM DELETE --}}
                     <form id="delete-item" action="{{ route('inbox.destroy', $data->id) }}" method="POST"
                           class="d-none">
                         @csrf
                         @method('DELETE')
                     </form>
+
+                    @if ($data->status == 'BARU')
+                    {{-- FORM DISPOSITION --}}
+                    <form id="disposition-form" action="{{ route('disposition.store') }}" method="POST">
+                        @csrf
+                        <h5>Disposisi</h5>
+                        <hr>
+                        <input type="hidden" name="mail_id" value="{{ $data->id }}">
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="user_id">Pegawai</label>
+                                    <select name="user_id" id="user_id"
+                                            class="form-control select2 @error('user_id') is-invalid @enderror">
+                                    </select>
+                                    @error('user_id')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    @endif
+
+                    <div class="row mt-3">
+                        <div class="col">
+                            @if ($data->status == 'BARU')
+                            <button type="button" class="btn btn-success px-3"
+                                    onclick="updateData()">Simpan</button>
+                            <button type="button" class="btn btn-primary px-3"
+                                    onclick="createDisposition()">Disposisi</button>
+                            @endif
+                            <a href="{{ route('inbox.index') }}" class="btn btn-light px-3">Kembali</a>
+
+
+                            @if ($data->status == 'BARU')
+                            <button type="button" class="btn btn-outline-danger px-3 float-right"
+                                    onclick="onDelete()">
+                                Hapus</button>
+                            @endif
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -239,6 +277,26 @@
             }
         });
 
+        $('#user_id').select2({
+            ajax: {
+                placeholder: '-- Pilih --',
+                    dalay: 100,
+                        url: '{{ route('api.user.populate.user_disposiiton') }}',
+                        dataType: 'json',
+                        type: 'POST',
+                        data: function (params){
+                        return {
+                            q: params.term,
+                            };
+                        },
+                        processResults: function (data) {
+                        return {
+                        results: data.items
+                    };
+                }
+            }
+        });
+
         $('#category_id').change(function(){
             const url = "{{ route('api.category.detail') }}";
             let id = $('#category_id').val();
@@ -281,6 +339,14 @@
                     } 
                 }
             )
+        }
+
+        createDisposition = () => {
+            $('#disposition-form').submit();
+        }
+
+        updateData = () => {
+            $('#inboxes-form').submit();
         }
     });
 </script>

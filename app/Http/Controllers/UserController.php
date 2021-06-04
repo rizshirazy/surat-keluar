@@ -128,4 +128,34 @@ class UserController extends Controller
     {
         //
     }
+
+
+    // API
+    public function populateUserDisposition(Request $request)
+    {
+        $data = User::where('role_id', 2)
+            ->orderBy('name', 'asc')
+            ->get();
+
+        if ($q = $request->input('q')) {
+            $data = User::whereRaw("UPPER(TRIM(name)) LIKE UPPER(TRIM('%{$q}%'))", [$q])
+                ->orWhereRaw("UPPER(TRIM(position)) LIKE UPPER(TRIM('%{$q}%'))", [$q])
+                ->where('role_id', 2)
+                ->orderBy('name', 'asc')
+                ->get();
+        }
+
+        $i = 0;
+        $rows = array();
+
+        foreach ($data as $row) {
+            $rows[$i]['id'] = $row->id;
+            $rows[$i]['text'] = $row->name . " | " . $row->position;
+            $i++;
+        }
+
+        return [
+            'items' => $rows
+        ];
+    }
 }

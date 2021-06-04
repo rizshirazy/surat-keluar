@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Disposition;
 use App\Http\Requests\CreateInboxRequest;
 use App\Http\Requests\UpdateInboxRequest;
 use App\Inbox;
@@ -117,7 +118,8 @@ class InboxController extends Controller
     public function show(Inbox $inbox)
     {
         return view('pages.inbox.show', [
-            'data' => $inbox
+            'data' => $inbox,
+            'disposition' => Disposition::where('mail_id', $inbox->id)->get()
         ]);
     }
 

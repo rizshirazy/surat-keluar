@@ -25,3 +25,4 @@ Route::post('department/populate', 'DepartmentController@populate')->name('api.d
 
 Route::post('type/populate', 'TypeController@populate')->name('api.type.populate');
 Route::post('user-role/populate', 'UserRoleController@populate')->name('api.role.populate');
+Route::post('user/populate/user-disposition', 'UserController@populateUserDisposition')->name('api.user.populate.user_disposiiton');

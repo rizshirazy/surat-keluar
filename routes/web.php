@@ -30,6 +30,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('outbox/report', 'OutboxController@report')->name('outbox.report');
 
     Route::resource('inbox', 'InboxController')->names('inbox');
+    Route::prefix('disposition')->group(function () {
+        Route::post('create', 'DispositionController@store')->name('disposition.store');
+    });
 
     Route::resource('category', 'CategoryController')->names('category');
     Route::resource('user', 'UserController')->names('user');

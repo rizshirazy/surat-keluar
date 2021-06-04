@@ -4,11 +4,11 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-12">
-            <div class="card glass-effect p-3" style="background-color: transparent; border:none">
+            <div class="card p-3">
 
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
-                        <h4 class="text-white">Surat Masuk</h4>
+                        <h4>Surat Masuk</h4>
                     </div>
 
                     <table class="table my-3">
@@ -58,6 +58,30 @@
                             <th class="bg-light" width="20%">Nama Petugas</th>
                             <td class="bg-white">{{ $data->user->name }}</td>
                         </tr>
+                    </table>
+
+                    <h5 class="mt-5">Disposisi</h5>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Nama</th>
+                                <th>Keterangan</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @forelse ($disposition as $item)
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $item->user->name }}</td>
+                                <td>{{ $item->notes }}</td>
+                            </tr>
+
+                            @empty
+
+                            @endforelse
+                        </tbody>
                     </table>
 
                     <a href="{{ route('inbox.index') }}" class="btn btn-light px-3">Kembali</a>
