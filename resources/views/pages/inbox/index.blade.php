@@ -30,7 +30,7 @@
                                         <th>Kode Surat</th>
                                         <th>Perihal</th>
                                         <th>Asal</th>
-                                        <th>Salinan</th>
+                                        <th>Dokumen</th>
                                         <th>Aksi</th>
                                     </tr>
                                 </thead>

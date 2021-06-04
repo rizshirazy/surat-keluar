@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateInboxRequest;
+use App\Http\Requests\UpdateInboxRequest;
 use App\Inbox;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
@@ -88,6 +88,17 @@ class InboxController extends Controller
 
         $next_index = $last_index ? $last_index->index + 1 : 1;
 
+        if ($file = $request->file('document')) {
+
+            $extention = $file->getClientOriginalExtension();
+
+            if (in_array($extention, ['pdf'])) {
+                $data['document'] = $file->store('assets/inbox', 'public');
+            } else {
+                return back()->withInput()->withErrors(['document' => 'Dokumen harus dalam bentuk pdf']);
+            }
+        }
+
         $data['index'] = $next_index;
         $data['date'] = $date->format('Y-m-d');
         $data['user_id'] = Auth::id();
@@ -105,7 +116,7 @@ class InboxController extends Controller
      */
     public function show(Inbox $inbox)
     {
-        return view('pages.inbox.edit', [
+        return view('pages.inbox.show', [
             'data' => $inbox
         ]);
     }
@@ -130,9 +141,24 @@ class InboxController extends Controller
      * @param  \App\Inbox  $inbox
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Inbox $inbox)
+    public function update(UpdateInboxRequest $request, Inbox $inbox)
     {
-        //
+        $data = $request->all();
+
+        if ($file = $request->file('document')) {
+
+            $extention = $file->getClientOriginalExtension();
+
+            if (in_array($extention, ['pdf'])) {
+                $data['document'] = $file->store('assets/inbox', 'public');
+            } else {
+                return back()->withInput()->withErrors(['document' => 'Dokumen harus dalam bentuk pdf']);
+            }
+        }
+
+        $inbox->update($data);
+
+        return redirect()->route('inbox.edit', $inbox->id)->with('success', 'Data berhasil diperbarui!');
     }
 
     /**

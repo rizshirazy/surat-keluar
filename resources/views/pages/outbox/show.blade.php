@@ -18,7 +18,9 @@
                         </tr>
                         <tr>
                             <th class="bg-light" width="20%">Tanggal</th>
-                            <td class="bg-white">{{ Carbon\Carbon::parse($data->date)->format('d-m-Y') }}</td>
+                            <td class="bg-white">
+                                {{ Carbon\Carbon::parse($data->date)->locale('id_ID')->format('d F Y') }}
+                            </td>
                         </tr>
                         <tr>
                             <th class="bg-light" width="20%">Kode Surat</th>

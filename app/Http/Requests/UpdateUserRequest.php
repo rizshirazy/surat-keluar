@@ -32,7 +32,7 @@ class UpdateUserRequest extends FormRequest
             'nip'               => 'required|unique:users,nip,' . $user->id,
             'position'          => 'required',
             'is_active'         => 'required|in:Y,N',
-            'is_admin'          => 'in:Y,N',
+            'role_id'           => 'required|exists:user_roles,id',
         ];
     }
 
@@ -54,6 +54,7 @@ class UpdateUserRequest extends FormRequest
             'password.min'              => 'Password minimum :min karakter',
             'password_confirm.required' => 'Konfirmasi password tidak boleh kosong',
             'password_confirm.same'     => 'Konfirmasi password tidak sama',
+            'role_id.required'          => 'Role Pengguna tidak boleh kosong',
         ];
     }
 }

@@ -8,7 +8,7 @@
 
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
-                        <h4 class="text-white">Surat Keluar</h4>
+                        <h4 class="text-white">Surat Masuk</h4>
                     </div>
 
                     <table class="table my-3">
@@ -18,7 +18,8 @@
                         </tr>
                         <tr>
                             <th class="bg-light" width="20%">Tanggal</th>
-                            <td class="bg-white">{{ Carbon\Carbon::parse($data->date)->format('d-m-Y') }}</td>
+                            <td class="bg-white">{{ Carbon\Carbon::parse($data->date)->locale('id')->format('d F Y') }}
+                            </td>
                         </tr>
                         <tr>
                             <th class="bg-light" width="20%">Kode Surat</th>
@@ -29,8 +30,12 @@
                             <td class="bg-white">{{ $data->subject }}</td>
                         </tr>
                         <tr>
-                            <th class="bg-light" width="20%">Tujuan</th>
-                            <td class="bg-white">{{ $data->destination }}</td>
+                            <th class="bg-light" width="20%">Asal</th>
+                            <td class="bg-white">{{ $data->origin }}</td>
+                        </tr>
+                        <tr>
+                            <th class="bg-light" width="20%">Lampiran</th>
+                            <td class="bg-white">{{ $data->attachments ?? '-' }}</td>
                         </tr>
                         <tr>
                             <th class="bg-light" width="20%">Dokumen</th>
@@ -46,12 +51,16 @@
                             </td>
                         </tr>
                         <tr>
-                            <th class="bg-light" width="20%">Nama Pegawai</th>
+                            <th class="bg-light" width="20%">Sifat Surat</th>
+                            <td class="bg-white">{{ $data->type->name }}</td>
+                        </tr>
+                        <tr>
+                            <th class="bg-light" width="20%">Nama Petugas</th>
                             <td class="bg-white">{{ $data->user->name }}</td>
                         </tr>
                     </table>
 
-                    <a href="{{ route('outbox.index') }}" class="btn btn-light px-3">Kembali</a>
+                    <a href="{{ route('inbox.index') }}" class="btn btn-light px-3">Kembali</a>
 
                 </div>
             </div>

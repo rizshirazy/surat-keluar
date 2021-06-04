@@ -94,14 +94,13 @@
 
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="is_admin">Admin</label>
-                                    <select name="is_admin" id="is_admin" class="form-control select2">
-                                        <option value="N" @if ($data->is_admin == 'N') selected @endif>Tidak
-                                        </option>
-                                        <option value="Y" @if ($data->is_admin == 'Y') selected @endif>Ya</option>
+                                    <label for="role_id">Role</label>
+                                    <select name="role_id" id="role_id"
+                                            class="form-control select2 @error('role_id') is-invalid @enderror">
+                                        <option value="{{ $data->role_id}}">{{ ucfirst($data->role->name) }}</option>
                                     </select>
 
-                                    @error('is_admin')
+                                    @error('role_id')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
@@ -154,6 +153,26 @@
 
         $('.select2').select2();
 
+        $('#role_id').select2({
+            ajax: {
+                placeholder: '-- Pilih --',
+                    dalay: 100,
+                        url: '{{ route('api.role.populate') }}',
+                        dataType: 'json',
+                        type: 'POST',
+                        data: function (params){
+                        return {
+                            q: params.term,
+                            };
+                        },
+                        processResults: function (data) {
+                        return {
+                        results: data.items
+                    };
+                }
+            }
+        });
+        
         $('#category_id').select2({
             ajax: {
                 placeholder: '-- Pilih --',

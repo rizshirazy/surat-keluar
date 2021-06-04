@@ -24,3 +24,4 @@ Route::post('group-category/populate', 'GroupCategoryController@populate')->name
 Route::post('department/populate', 'DepartmentController@populate')->name('api.department.populate');
 
 Route::post('type/populate', 'TypeController@populate')->name('api.type.populate');
+Route::post('user-role/populate', 'UserRoleController@populate')->name('api.role.populate');
