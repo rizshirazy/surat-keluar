@@ -129,31 +129,21 @@
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <script>
-        $(document).ready(function(){
-            const swalConfirm = Swal.mixin({
-                customClass: {
-                    confirmButton: 'btn btn-success px-4 mr-2',
-                    cancelButton: 'btn btn-outline-secondary px-4 mr-2',
-                },
-                buttonsStyling: false
-            });
+        const swalConfirm = Swal.mixin({
+            customClass: {
+                confirmButton: 'btn btn-success px-4 mr-2',
+                cancelButton: 'btn btn-outline-secondary px-4 mr-2',
+            },
+            buttonsStyling: false
+        });
 
-            const swalDanger = Swal.mixin({
-                customClass: {
-                    confirmButton: 'btn btn-danger px-4 mr-2',
-                    cancelButton: 'btn btn-light px-4 mr-2',
-                },
-                buttonsStyling: false,
-            });
-
-            $('.datepicker').datepicker({
-                format: 'dd-mm-yyyy',
-                language: 'id',
-                autoclose: true,
-                todayHighlight: true,
-                daysOfWeekHighlighted: [0],
-            });
-        })
+        const swalDanger = Swal.mixin({
+            customClass: {
+                confirmButton: 'btn btn-danger px-4 mr-2',
+                cancelButton: 'btn btn-light px-4 mr-2',
+            },
+            buttonsStyling: false,
+        });
     </script>
 
     @stack('script-after')

@@ -30,10 +30,14 @@ Route::middleware(['auth'])->group(function () {
     Route::post('outbox/report', 'OutboxController@report')->name('outbox.report');
 
     Route::resource('inbox', 'InboxController')->names('inbox');
+    Route::get('inbox/{id}/print', 'InboxController@print')->name('inbox.print');
 
+    // Route::resource('disposition', 'DispositionController')->names('disposition');
     Route::prefix('disposition')->group(function () {
         Route::post('create', 'DispositionController@store')->name('disposition.store');
-        Route::get('view/{id}', 'DispositionController@show')->name('disposition.show');
+        Route::get('{id}/edit', 'DispositionController@edit')->name('disposition.edit');
+        Route::put('{id}/update', 'DispositionController@update')->name('disposition.update');
+        Route::put('{id}/complete', 'DispositionController@complete')->name('disposition.complete');
     });
 
     Route::resource('category', 'CategoryController')->names('category');

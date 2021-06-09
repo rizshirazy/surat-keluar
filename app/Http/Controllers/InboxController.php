@@ -44,9 +44,13 @@ class InboxController extends Controller
                 ->addColumn('action', function ($item) {
                     $action = '';
 
-                    if (Auth::id() == $item->user_id) {
+                    if (Auth::id() == $item->user_id && $item->status == 'BARU') {
                         $action .=
                             '<a href="' . route('inbox.edit', $item->id) . '" class="btn btn-light" title="Edit"><i class="fas fa-pencil-alt"></i></a>';
+                    }
+
+                    if ($item->status == 'SELESAI') {
+                        $action .= '<a href="' . route('inbox.print', $item->id) . '" class="btn btn-light" title="Cetak"><i class="fas fa-print"></i></a>';
                     }
 
                     $action .= '<a href="' . route('inbox.show', $item->id) . '" class="btn btn-light" title="Detail"><i class="fas fa-chevron-right"></i></a>';
@@ -172,5 +176,15 @@ class InboxController extends Controller
     public function destroy(Inbox $inbox)
     {
         //
+    }
+
+
+    public function print($id)
+    {
+        $inbox = Inbox::findOrFail($id);
+
+        return view('pages.inbox.print', [
+            'data' => $inbox
+        ]);
     }
 }

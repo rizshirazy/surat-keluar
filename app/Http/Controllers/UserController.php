@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Disposition;
 use App\Http\Requests\CreateUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\User;
@@ -129,18 +130,38 @@ class UserController extends Controller
         //
     }
 
-
     // API
     public function populateUserDisposition(Request $request)
     {
-        $data = User::where('role_id', 2)
-            ->orderBy('name', 'asc')
-            ->get();
 
-        if ($q = $request->input('q')) {
+        $id = $request->input('id');
+        $q = $request->input('q');
+        $data = [];
+
+        if ($id && $q) {
+            $user = Disposition::where('id', $id)->firstOrFail()->user_id;
+
+            $data = User::where('id', '!=', $user)
+                ->whereRaw("UPPER(TRIM(name)) LIKE UPPER(TRIM('%{$q}%'))", [$q])
+                ->orWhereRaw("UPPER(TRIM(position)) LIKE UPPER(TRIM('%{$q}%'))", [$q])
+                ->where('role_id', 2)
+                ->orderBy('name', 'asc')
+                ->get();
+        } else if ($id) {
+            $user = Disposition::where('id', $id)->firstOrFail()->user_id;
+
+            $data = User::where('role_id', 2)
+                ->where('id', '!=', $user)
+                ->orderBy('name', 'asc')
+                ->get();
+        } else if ($q) {
             $data = User::whereRaw("UPPER(TRIM(name)) LIKE UPPER(TRIM('%{$q}%'))", [$q])
                 ->orWhereRaw("UPPER(TRIM(position)) LIKE UPPER(TRIM('%{$q}%'))", [$q])
                 ->where('role_id', 2)
+                ->orderBy('name', 'asc')
+                ->get();
+        } else {
+            $data = User::where('role_id', 2)
                 ->orderBy('name', 'asc')
                 ->get();
         }
@@ -150,7 +171,7 @@ class UserController extends Controller
 
         foreach ($data as $row) {
             $rows[$i]['id'] = $row->id;
-            $rows[$i]['text'] = $row->name . " | " . $row->position;
+            $rows[$i]['text'] = $row->name . " - " . $row->position;
             $i++;
         }
 

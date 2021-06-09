@@ -71,7 +71,6 @@
                                                 <th>Tanggal Surat</th>
                                                 <th>Perihal</th>
                                                 <th>Asal</th>
-                                                <th>Status</th>
                                                 <th>Aksi</th>
                                             </tr>
                                         </thead>
@@ -131,15 +130,14 @@
             url: '{{ route('disposition.populate_by_user') }}'
         },
         columns: [
-            { data : 'mail.reff', name: 'mail.reff', width: '120' },
-            { data : 'mail.date', name: 'mail.date', width: '80' },
-            { data : 'mail.subject', name: 'mail.subject', width: '200' },
-            { data : 'mail.origin', name: 'mail.origin', width: '200' },
-            { data : 'status', name: 'status' },
+            { data : 'reff', name: 'inboxes.reff', width: '200' },
+            { data : 'date', name: 'inboxes.date', width: '80', className: 'text-center' },
+            { data : 'subject', name: 'inboxes.subject', width: '250' },
+            { data : 'origin', name: 'inboxes.origin', width: '250' },
             { data : 'action', name: 'action', className: 'text-right' },
         ],
         columnDefs: [
-            { orderable: false, targets: [5] }
+            { orderable: false, targets: [4] }
         ],
         order: [
             [1, 'asc'],

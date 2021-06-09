@@ -281,7 +281,7 @@
             ajax: {
                 placeholder: '-- Pilih --',
                     dalay: 100,
-                        url: '{{ route('api.user.populate.user_disposiiton') }}',
+                        url: '{{ route('api.user.populate.user_disposition') }}',
                         dataType: 'json',
                         type: 'POST',
                         data: function (params){

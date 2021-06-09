@@ -15,25 +15,19 @@
                         <tr>
                             <th class="bg-light" width="20%">Nomor Surat</th>
                             <td class="bg-white">{{ $data->reff }}</td>
-                        </tr>
-                        <tr>
                             <th class="bg-light" width="20%">Tanggal</th>
                             <td class="bg-white">{{ Carbon\Carbon::parse($data->date)->locale('id')->format('d F Y') }}
                             </td>
                         </tr>
                         <tr>
+                            <th class="bg-light" width="20%">Perihal</th>
+                            <td class="bg-white">{{ $data->subject }}</td>
                             <th class="bg-light" width="20%">Kode Surat</th>
                             <td class="bg-white">{{ $data->category['code']." - ".$data->category['name']}}</td>
                         </tr>
                         <tr>
-                            <th class="bg-light" width="20%">Perihal</th>
-                            <td class="bg-white">{{ $data->subject }}</td>
-                        </tr>
-                        <tr>
-                            <th class="bg-light" width="20%">Asal</th>
+                            <th class="bg-light" width="20%">Asal Surat</th>
                             <td class="bg-white">{{ $data->origin }}</td>
-                        </tr>
-                        <tr>
                             <th class="bg-light" width="20%">Lampiran</th>
                             <td class="bg-white">{{ $data->attachments ?? '-' }}</td>
                         </tr>
@@ -42,21 +36,18 @@
                             <td class="bg-white">
                                 @if ($data->document)
                                 <a href="{{ Storage::url($data->document) }}" target="_blank"
-                                   class="btn btn-light text-danger" title="Lihat">
+                                   class="btn btn-light btn-sm text-danger" title="Lihat Dokumen">
                                     <i class="fas fa-file-pdf"></i></a>
-
                                 @else
                                 <span class="text-muted"><em>Tidak ada dokumen</em></span>
                                 @endif
                             </td>
-                        </tr>
-                        <tr>
                             <th class="bg-light" width="20%">Sifat Surat</th>
                             <td class="bg-white">{{ $data->type->name }}</td>
                         </tr>
                         <tr>
                             <th class="bg-light" width="20%">Nama Petugas</th>
-                            <td class="bg-white">{{ $data->user->name }}</td>
+                            <td class="bg-white" colspan="3">{{ $data->user->name }}</td>
                         </tr>
                     </table>
 
@@ -75,7 +66,13 @@
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $item->user->name }}</td>
-                                <td>{{ $item->notes }}</td>
+                                <td>
+                                    @if ($item->status == 'OPEN')
+                                    <span class="text-muted"><em>Dalam proses</em></span>
+                                    @else
+                                    {{ $item->notes}}
+                                    @endif
+                                </td>
                             </tr>
 
                             @empty

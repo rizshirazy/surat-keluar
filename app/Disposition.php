@@ -18,6 +18,7 @@ class Disposition extends Model
     protected $fillable = [
         'mail_id',
         'user_id',
+        'notes',
         'status'
     ];
 
