@@ -10,10 +10,13 @@
             <th colspan="8"></th>
         </tr>
         <tr>
-            <th>Periode:</th>
-            <th colspan="4"></th>
-            <th colspan="3">Dicetak oleh: {{ Auth::user()->name }} pada
-                {{ Carbon\Carbon::now()->format('d-m-Y H:i:s') }} </th>
+            <th colspan="2">Periode Laporan</th>
+            <th colspan="6">: </th>
+        </tr>
+        <tr>
+            <th colspan="2">Dicetak oleh</th>
+            <th colspan="6">: {{ Auth::user()->name }} pada
+                {{ Carbon\Carbon::now()->format('d-m-Y H:i:s') }}</th>
         </tr>
         <tr>
             <th>No</th>
@@ -27,7 +30,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach ($data as $item)
+        @forelse ($data as $item)
         <tr>
             <td>{{ $loop->iteration }}</td>
             <td>{{ $item->reff }}</td>
@@ -38,6 +41,10 @@
             <td>{{ $item->destination }}</td>
             <td>{{ $item->user->name }}</td>
         </tr>
-        @endforeach
+        @empty
+        <tr>
+            <td colspan="8"> Tidak ada data</td>
+        </tr>
+        @endforelse
     </tbody>
 </table>

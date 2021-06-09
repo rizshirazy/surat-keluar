@@ -10,6 +10,7 @@ use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\FromView;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithColumnFormatting;
+use Maatwebsite\Excel\Concerns\WithColumnWidths;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Events\AfterSheet;
@@ -19,7 +20,6 @@ use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
-use PhpOffice\PhpSpreadsheet\Style\Protection;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class OutboxesExport implements
@@ -27,6 +27,7 @@ class OutboxesExport implements
     Responsable,
     ShouldAutoSize,
     WithColumnFormatting,
+    WithColumnWidths,
     WithEvents,
     WithStyles
 {
@@ -36,7 +37,7 @@ class OutboxesExport implements
      * It's required to define the fileName within
      * the export class when making use of Responsable.
      */
-    private $fileName = 'surat-keluar.xlsx';
+    private $fileName = 'Laporan Surat Keluar Pengadilan Agama Mentok.xlsx';
 
     /**
      * Optional Writer Type
@@ -86,7 +87,7 @@ class OutboxesExport implements
      */
     public function view(): View
     {
-        $data = Outbox::whereYear('date', date('Y'));
+        $data = Outbox::whereYear('date', date('Y'))->get();
 
         return view('exports.outboxes', [
             'data' => $data
@@ -97,6 +98,20 @@ class OutboxesExport implements
     {
         return [
             'C' => NumberFormat::FORMAT_DATE_DDMMYYYY,
+        ];
+    }
+
+    public function columnWidths(): array
+    {
+        return [
+            'A' => 6,
+            'B' => 28,
+            'C' => 15,
+            'D' => 6.3,
+            'E' => 19,
+            'F' => 50,
+            'G' => 33,
+            'G' => 25,
         ];
     }
 
@@ -132,13 +147,7 @@ class OutboxesExport implements
                     'horizontal' => Alignment::VERTICAL_CENTER,
                 ],
             ],
-            4    =>
-            [
-                'font' => [
-                    'italic' => true,
-                ],
-            ],
-            5   =>
+            6   =>
             [
                 'font' => [
                     'bold' => true
@@ -165,13 +174,12 @@ class OutboxesExport implements
                     'horizontal' => Alignment::VERTICAL_CENTER,
                 ]
             ],
-            'F4:H4'  =>
-            [
+            '4:5' => [
                 'alignment' => [
-                    'horizontal' => Alignment::HORIZONTAL_RIGHT,
-                ]
+                    'horizontal' => Alignment::HORIZONTAL_LEFT,
+                ],
             ],
-            'A5:H' . $highestRow  =>
+            'A6:H' . $highestRow  =>
             [
                 'borders' => [
                     'allBorders' => [
