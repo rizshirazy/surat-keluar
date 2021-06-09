@@ -1,6 +1,9 @@
 <?php
 
+use App\Category;
+use App\Outbox;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -21,6 +24,18 @@ Auth::routes([
     'reset' => false, // Password Reset Routes...
     'verify' => false, // Email Verification Routes...
 ]);
+
+Route::get('test', function () {
+    $totalOutbox = Outbox::selectRaw('category_id, count(1) qty')
+        ->whereYear('date', date('Y'))
+        ->groupBy('category_id');
+
+    $data = Category::select('id', 'name', 'code', 'qty')
+        ->leftJoinSub($totalOutbox, 'totalOutbox', function ($join) {
+            $join->on('totalOutbox.category_id', '=', 'categories.id');
+        })->orderBy('id', 'asc')
+        ->get();
+});
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/', 'HomeController@index')->name('home');
