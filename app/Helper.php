@@ -1,5 +1,7 @@
 <?php
 
+use App\User;
+use Illuminate\Support\Facades\Auth;
 
 function romanic_number($integer, $upcase = true)
 {
@@ -16,4 +18,27 @@ function romanic_number($integer, $upcase = true)
     }
 
     return $return;
+}
+
+function role($role){
+
+    if (Auth::check()) {
+        $user_role = Auth::user()->role->name;
+
+        /**
+         *  Availaable roles:
+         *  ADMIN
+         *  PETUGAS
+         *  PENGGUNA
+         * 
+         */
+
+        if (strtoupper($user_role) == strtoupper($role)) {
+            return true;
+        }
+
+        return false;
+    } 
+
+    return false;
 }

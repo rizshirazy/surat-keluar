@@ -14,7 +14,7 @@ class CreateUserRequest extends FormRequest
      */
     public function authorize()
     {
-        return Auth::check();
+        return Auth::check() && role('SUPER ADMIN');
     }
 
     /**
@@ -30,10 +30,6 @@ class CreateUserRequest extends FormRequest
             'nip'               => 'required|unique:users,nip',
             'position'          => 'required',
             'is_active'         => 'required|in:Y,N',
-            'is_admin'          => 'in:Y,N',
-            // 'password'          => 'required|min:8',
-            // 'password_confirm'  => 'required|same:password',
-
         ];
     }
 

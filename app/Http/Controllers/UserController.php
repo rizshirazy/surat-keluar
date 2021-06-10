@@ -30,10 +30,10 @@ class UserController extends Controller
                 ->addColumn('action', function ($item) {
                     $action = '';
 
-                    if (Auth::id() == $item->user_id) {
+                    if (role('SUPER ADMIN')) {
+                        $action .=
+                            '<a href="' . route('user.edit', $item->id) . '" class="btn btn-light" title="Edit"><i class="fas fa-pencil-alt"></i></a>';
                     }
-                    $action .=
-                        '<a href="' . route('user.edit', $item->id) . '" class="btn btn-light" title="Edit"><i class="fas fa-pencil-alt"></i></a>';
 
                     $action .= '<a href="' . route('user.show', $item->id) . '" class="btn btn-light" title="Detail"><i class="fas fa-chevron-right"></i></a>';
 
@@ -97,9 +97,13 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        return view('pages.user.edit', [
-            'data' => $user
-        ]);
+        if (role('SUPER ADMIN')) {
+            return view('pages.user.edit', [
+                'data' => $user
+            ]);
+        }
+
+        abort(403);
     }
 
     /**

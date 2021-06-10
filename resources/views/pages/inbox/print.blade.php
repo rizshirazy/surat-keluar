@@ -166,6 +166,9 @@
                                         <div style="margin-bottom: 30px;">
                                             {{ $item->user->position }}
                                         </div>
+                                        <div class="text-muted">
+                                            <em>{{ $item->updated_at }}</em>
+                                        </div>
                                     </td>
                                     <td>{{ $item->notes}}</td>
                                 </tr>

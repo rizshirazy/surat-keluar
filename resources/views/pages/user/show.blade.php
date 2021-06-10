@@ -25,6 +25,10 @@
                             <td class="bg-white">{{ $data->position }}</td>
                         </tr>
                         <tr>
+                            <th class="bg-light" width="20%">Role</th>
+                            <td class="bg-white">{{ ucfirst($data->role->name) }}</td>
+                        </tr>
+                        <tr>
                             <th class="bg-light" width="20%">Email</th>
                             <td class="bg-white">{{ $data->email }}</td>
                         </tr>

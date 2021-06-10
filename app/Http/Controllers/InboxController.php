@@ -49,7 +49,7 @@ class InboxController extends Controller
                             '<a href="' . route('inbox.edit', $item->id) . '" class="btn btn-light" title="Edit"><i class="fas fa-pencil-alt"></i></a>';
                     }
 
-                    if ($item->status == 'SELESAI') {
+                    if ($item->status == 'SELESAI' && role('PETUGAS')) {
                         $action .= '<a href="' . route('inbox.print', $item->id) . '" class="btn btn-light" title="Cetak"><i class="fas fa-print"></i></a>';
                     }
 

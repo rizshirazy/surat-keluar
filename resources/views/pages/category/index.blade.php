@@ -9,7 +9,9 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
                         <h3 class="">Kode Surat</h3>
+                        @if (role('SUPER ADMIN'))
                         <a href="{{ route('category.create') }}" class="btn btn-success px-4">Tambah Data</a>
+                        @endif
                     </div>
 
                     @include('includes.alert')

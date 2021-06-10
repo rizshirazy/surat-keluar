@@ -29,7 +29,9 @@
                             <div class="d-flex justify-content-between mt-3">
                                 <h3 class="">Surat Masuk</h3>
                                 <div>
+                                    @if (role('PETUGAS'))
                                     <a href="{{ route('inbox.create') }}" class="btn btn-success px-4">Tambah Data</a>
+                                    @endif
                                     <button onclick="showModal('report', 1)"
                                             class="btn btn-warning px-4">Laporan</button>
                                 </div>

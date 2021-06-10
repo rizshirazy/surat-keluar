@@ -84,9 +84,13 @@
                             <div class="col">
                                 <button type="submit" class="btn btn-success px-3 mr-1">Simpan</button>
                                 <a href="{{ route('category.index') }}" class="btn btn-light px-3">Batal</a>
+
+                                @if (role('SUPER ADMIN'))
                                 <button type="button" class="btn btn-outline-danger px-3 float-right"
                                         onclick="onDelete()">
                                     Hapus</button>
+                                @endif
+
                             </div>
                         </div>
                     </form>

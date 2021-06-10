@@ -26,8 +26,10 @@ class CategoryController extends Controller
                 ->addColumn('action', function ($item) {
                     $action = '';
 
-                    $action .=
-                        '<a href="' . route('category.edit', $item->id) . '" class="btn btn-light" title="Edit"><i class="fas fa-pencil-alt"></i></a>';
+                    if (role('SUPER ADMIN')) {
+                        $action .=
+                            '<a href="' . route('category.edit', $item->id) . '" class="btn btn-light" title="Edit"><i class="fas fa-pencil-alt"></i></a>';
+                    }
 
                     return '<div class="btn-group" role="group">' . $action . '</div>';
                 })
@@ -82,7 +84,11 @@ class CategoryController extends Controller
      */
     public function edit(Category $category)
     {
-        return view('pages.category.edit', ['data' => $category]);
+        if (role('SUPER ADMIN')) {
+            return view('pages.category.edit', ['data' => $category]);
+        }
+
+        abort('403');
     }
 
     /**
