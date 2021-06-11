@@ -29,6 +29,12 @@ class OutboxSummaryExport implements
     ShouldAutoSize
 {
 
+    public function __construct($start_date, $end_date)
+    {
+        $this->start_date = $start_date;
+        $this->end_date = $end_date;
+    }
+
     /**
      * @return string
      */
@@ -39,9 +45,31 @@ class OutboxSummaryExport implements
 
     public function view(): View
     {
-        $totalOutbox = Outbox::selectRaw('category_id, count(1) qty')
-            ->whereYear('date', date('Y'))
-            ->groupBy('category_id');
+        $SD = $this->start_date ? $this->start_date->format('Y-m-d') : null;
+        $ED = $this->end_date ? $this->end_date->format('Y-m-d') : null;
+
+        if ($SD && $ED) {
+            $totalOutbox = Outbox::selectRaw('category_id, count(1) qty')
+                ->where('date', '>=', $SD)
+                ->where('date', '<=', $ED)
+                ->groupBy('category_id');
+            $periode = $this->start_date->format('d-m-Y') . ' s.d ' . $this->end_date->format('d-m-Y');
+        } else if ($SD) {
+            $totalOutbox = Outbox::selectRaw('category_id, count(1) qty')
+                ->where('date', '>=', $SD)
+                ->groupBy('category_id');
+            $periode = $this->start_date->format('d-m-Y') . ' s.d ' . date('d-m-Y');
+        } else if ($ED) {
+            $totalOutbox = Outbox::selectRaw('category_id, count(1) qty')
+                ->where('date', '<=', $ED)
+                ->groupBy('category_id');
+            $periode = 'Awal s.d ' . $this->end_date->format('d-m-Y');
+        } else {
+            $totalOutbox = Outbox::selectRaw('category_id, count(1) qty')
+                ->whereYear('date', date('Y'))
+                ->groupBy('category_id');
+            $periode = 'Tahun ' . date('Y');
+        }
 
         $data = Category::select('id', 'name', 'code', 'qty')
             ->leftJoinSub($totalOutbox, 'totalOutbox', function ($join) {
@@ -50,7 +78,8 @@ class OutboxSummaryExport implements
             ->get();
 
         return view('exports.outboxes-summary', [
-            'data' => $data
+            'data' => $data,
+            'periode' => $periode
         ]);
     }
 
@@ -170,6 +199,11 @@ class OutboxSummaryExport implements
                     'vertical' => Alignment::VERTICAL_TOP,
                 ],
             ],
+            $highestRow => [
+                'font' => [
+                    'bold' => true
+                ],
+            ]
         ];
     }
 

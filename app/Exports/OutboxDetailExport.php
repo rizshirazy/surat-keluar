@@ -31,6 +31,12 @@ class OutboxDetailExport implements
     WithTitle
 {
 
+    public function __construct($start_date, $end_date)
+    {
+        $this->start_date = $start_date;
+        $this->end_date = $end_date;
+    }
+
     /**
      * @return string
      */
@@ -73,10 +79,30 @@ class OutboxDetailExport implements
 
     public function view(): View
     {
-        $data = Outbox::whereYear('date', date('Y'))->get();
+        $SD = $this->start_date ? $this->start_date->format('Y-m-d') : null;
+        $ED = $this->end_date ? $this->end_date->format('Y-m-d') : null;
+
+        if ($SD && $ED) {
+            $data = Outbox::where('date', '>=', $SD)
+                ->where('date', '<=', $ED)
+                ->get();
+            $periode = $this->start_date->format('d-m-Y') . ' s.d ' . $this->end_date->format('d-m-Y');
+        } else if ($SD) {
+            $data = Outbox::where('date', '>=', $SD)
+                ->get();
+            $periode = $this->start_date->format('d-m-Y') . ' s.d ' . date('d-m-Y');
+        } else if ($ED) {
+            $data = Outbox::where('date', '<=', $ED)
+                ->get();
+            $periode = 'Awal s.d ' . $this->end_date->format('d-m-Y');
+        } else {
+            $data = Outbox::whereYear('date', date('Y'))->get();
+            $periode = 'Tahun ' . date('Y');
+        }
 
         return view('exports.outboxes', [
-            'data' => $data
+            'data' => $data,
+            'periode' => $periode
         ]);
     }
 

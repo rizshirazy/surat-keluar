@@ -200,10 +200,11 @@ class OutboxController extends Controller
             ->with('success', 'Nomor Surat ' . $outbox->reff . ' telah dihapus!');
     }
 
-    public function report()
+    public function report(Request $request)
     {
-        $start_date = null;
-        $end_date = null;
+        $data = $request->all();
+        $start_date = $data['start_date'] ? Carbon::parse($request->input('start_date')) :  null;
+        $end_date = $data['end_date'] ? Carbon::parse($request->input('end_date')) : null;
 
         return new OutboxesExport($start_date, $end_date);
     }

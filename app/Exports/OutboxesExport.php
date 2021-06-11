@@ -24,7 +24,7 @@ class OutboxesExport implements
      */
     private $writerType = Excel::XLSX;
 
-    public function __construct($start_date = null, $end_date = null)
+    public function __construct($start_date, $end_date)
     {
         $this->start_date = $start_date;
         $this->end_date = $end_date;
@@ -36,8 +36,8 @@ class OutboxesExport implements
     public function sheets(): array
     {
         return [
-            new OutboxDetailExport,
-            new OutboxSummaryExport
+            new OutboxDetailExport($this->start_date, $this->end_date),
+            new OutboxSummaryExport($this->start_date, $this->end_date)
         ];
     }
 }

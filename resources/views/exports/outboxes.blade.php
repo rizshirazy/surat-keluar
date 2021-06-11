@@ -11,7 +11,7 @@
         </tr>
         <tr>
             <th colspan="2">Periode Laporan</th>
-            <th colspan="6">: </th>
+            <th colspan="6">: {{ $periode }}</th>
         </tr>
         <tr>
             <th colspan="2">Dicetak oleh</th>
