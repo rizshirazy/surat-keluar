@@ -14,27 +14,28 @@
                     <table class="table my-3">
                         <tr>
                             <th class="bg-light" width="20%">Nomor Surat</th>
-                            <td class="bg-white">{{ $data->reff }}</td>
+                            <td class="bg-white">{{ $confidential ? '' : $data->reff }}</td>
                             <th class="bg-light" width="20%">Tanggal</th>
-                            <td class="bg-white">{{ Carbon\Carbon::parse($data->date)->locale('id')->format('d F Y') }}
+                            <td class="bg-white">{{ $data->date_locale }}
                             </td>
                         </tr>
                         <tr>
                             <th class="bg-light" width="20%">Perihal</th>
-                            <td class="bg-white">{{ $data->subject }}</td>
+                            <td class="bg-white">{{$confidential ? '' : $data->subject }}</td>
                             <th class="bg-light" width="20%">Kode Surat</th>
-                            <td class="bg-white">{{ $data->category['code']." - ".$data->category['name']}}</td>
+                            <td class="bg-white">
+                                {{ $confidential ? '' : $data->category['code']." - ".$data->category['name']}}</td>
                         </tr>
                         <tr>
                             <th class="bg-light" width="20%">Asal Surat</th>
-                            <td class="bg-white">{{ $data->origin }}</td>
+                            <td class="bg-white">{{ $confidential ? '' : $data->origin }}</td>
                             <th class="bg-light" width="20%">Lampiran</th>
                             <td class="bg-white">{{ $data->attachments ?? '-' }}</td>
                         </tr>
                         <tr>
                             <th class="bg-light" width="20%">Dokumen</th>
                             <td class="bg-white">
-                                @if ($data->document)
+                                @if ($data->document && !$confidential)
                                 <a href="{{ Storage::url($data->document) }}" target="_blank"
                                    class="btn btn-light btn-sm text-danger" title="Lihat Dokumen">
                                     <i class="fas fa-file-pdf"></i></a>
@@ -62,7 +63,15 @@
                         </thead>
 
                         <tbody>
-                            @forelse ($disposition as $item)
+                            @if ($confidential)
+                            {{-- Rahasia --}}
+                            <tr>
+                                <td colspan="3" class="text-center text-muted">Rahasia</td>
+                            </tr>
+                            @else
+                            {{-- Tidak Rahasia --}}
+
+                            @forelse ($data->disposition as $item)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $item->user->name }}</td>
@@ -74,10 +83,14 @@
                                     @endif
                                 </td>
                             </tr>
-
                             @empty
+                            <tr>
+                                <td colspan="3" class="text-center text-muted"><em>Tidak ada data</em></td>
+                            </tr>
 
                             @endforelse
+                            {{-- Akhir --}}
+                            @endif
                         </tbody>
                     </table>
 

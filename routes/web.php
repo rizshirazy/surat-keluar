@@ -26,15 +26,8 @@ Auth::routes([
 ]);
 
 Route::get('test', function () {
-    $totalOutbox = Outbox::selectRaw('category_id, count(1) qty')
-        ->whereYear('date', date('Y'))
-        ->groupBy('category_id');
-
-    $data = Category::select('id', 'name', 'code', 'qty')
-        ->leftJoinSub($totalOutbox, 'totalOutbox', function ($join) {
-            $join->on('totalOutbox.category_id', '=', 'categories.id');
-        })->orderBy('id', 'asc')
-        ->get();
+    $inbox = App\Inbox::all();
+    return $inbox;
 });
 
 Route::middleware(['auth'])->group(function () {

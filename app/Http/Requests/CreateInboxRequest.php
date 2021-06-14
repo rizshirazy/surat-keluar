@@ -31,6 +31,7 @@ class CreateInboxRequest extends FormRequest
             'type_id'       => 'required|exists:types,id',
             'date'          => 'required|date',
             'subject'       => 'required',
+            'document'      => 'required',
         ];
     }
 
@@ -49,6 +50,7 @@ class CreateInboxRequest extends FormRequest
             'date.required'         => 'Tanggal Surat tidak boleh kosong',
             'date.date'             => 'Format Tanggal tidak sesuai',
             'subject.required'      => 'Perihal tidak boleh kosong',
+            'document.required'     => 'Dokumen belum dipilih',
         ];
     }
 }

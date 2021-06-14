@@ -27,6 +27,7 @@ class UpdateOutboxRequest extends FormRequest
         return [
             'destination'   => 'required',
             'category_id'   => 'required|exists:categories,id',
+            'type_id'       => 'required|exists:types,id',
             'date'          => 'required|date',
             'subject'       => 'required',
         ];
@@ -42,6 +43,7 @@ class UpdateOutboxRequest extends FormRequest
         return [
             'destination.required'      => 'Tujuan Surat tidak boleh kosong',
             'category_id.required'      => 'Kode Surat tidak boleh kosong',
+            'type_id.required'          => 'Sifat Surat tidak boleh kosong',
             'date.required'             => 'Tanggal Surat tidak boleh kosong',
             'date.date'                 => 'Format Tanggal tidak sesuai',
             'subject.required'          => 'Perihal tidak boleh kosong',

@@ -14,7 +14,7 @@
                     <table class="table my-3">
                         <tr>
                             <th class="bg-light" width="20%">Nomor Surat</th>
-                            <td class="bg-white">{{ $data->reff }}</td>
+                            <td class="bg-white">{{ $confidential ? '' : $data->reff }}</td>
                         </tr>
                         <tr>
                             <th class="bg-light" width="20%">Tanggal</th>
@@ -24,20 +24,25 @@
                         </tr>
                         <tr>
                             <th class="bg-light" width="20%">Kode Surat</th>
-                            <td class="bg-white">{{ $data->category['code']." - ".$data->category['name']}}</td>
+                            <td class="bg-white">
+                                {{ $confidential ? '' : $data->category['code']." - ".$data->category['name']}}</td>
                         </tr>
                         <tr>
                             <th class="bg-light" width="20%">Perihal</th>
-                            <td class="bg-white">{{ $data->subject }}</td>
+                            <td class="bg-white">{{ $confidential ? '' : $data->subject }}</td>
                         </tr>
                         <tr>
                             <th class="bg-light" width="20%">Tujuan</th>
-                            <td class="bg-white">{{ $data->destination }}</td>
+                            <td class="bg-white">{{ $confidential ? '' : $data->destination }}</td>
+                        </tr>
+                        <tr>
+                            <th class="bg-light" width="20%">Sifat Surat</th>
+                            <td class="bg-white">{{ $data->type->name }}</td>
                         </tr>
                         <tr>
                             <th class="bg-light" width="20%">Dokumen</th>
                             <td class="bg-white">
-                                @if ($data->document)
+                                @if ($data->document && !$confidential)
                                 <a href="{{ Storage::url($data->document) }}" target="_blank"
                                    class="btn btn-light text-danger" title="Lihat">
                                     <i class="fas fa-file-pdf"></i></a>
@@ -49,7 +54,7 @@
                         </tr>
                         <tr>
                             <th class="bg-light" width="20%">Nama Pegawai</th>
-                            <td class="bg-white">{{ $data->user->name }}</td>
+                            <td class="bg-white">{{ $confidential ? '' : $data->user->name }}</td>
                         </tr>
                     </table>
 

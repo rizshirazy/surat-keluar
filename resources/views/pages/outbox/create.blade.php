@@ -75,6 +75,20 @@
                                 </div>
                             </div>
 
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="type_id">Sifat Surat</label>
+                                    <select name="type_id" id="type_id"
+                                            class="form-control select2 @error('type_id') is-invalid @enderror">
+                                    </select>
+                                    @error('type_id')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+                                </div>
+                            </div>
+
                             <div class="col-md-12">
                                 <div id="card_desc" class="card bg-light my-3" style="display: none">
                                     <div class="card-body">
@@ -112,6 +126,26 @@
             autoclose: true,
             todayHighlight: true,
             daysOfWeekHighlighted: [0],
+        });
+
+        $('#type_id').select2({
+            ajax: {
+                placeholder: '-- Pilih --',
+                    dalay: 100,
+                        url: '{{ route('api.type.populate') }}',
+                        dataType: 'json',
+                        type: 'POST',
+                        data: function (params){
+                        return {
+                            q: params.term,
+                            };
+                        },
+                        processResults: function (data) {
+                        return {
+                        results: data.items
+                    };
+                }
+            }
         });
 
         $('#category_id').select2({

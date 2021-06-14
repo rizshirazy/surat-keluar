@@ -11,6 +11,8 @@
                         <h4>Disposisi Surat Masuk</h4>
                     </div>
 
+                    @include('includes.error')
+
                     <table class="table my-3">
                         <tr>
                             <th class="bg-light" width="20%">Nomor Surat</th>
@@ -120,10 +122,10 @@
                         </div>
                     </form>
 
-                    <button type="button" class="btn btn-primary px-3"
-                            onclick="updateData()">Disposisi</button>
                     <button type="button" class="btn btn-success px-3"
                             onclick="completed()">Selesai</button>
+                    <button type="button" class="btn btn-primary px-3"
+                            onclick="updateData()">Lanjutkan Disposisi</button>
                     <a href="{{ route('inbox.index') }}" class="btn btn-light px-3">Kembali</a>
 
                     <form id="form-complete" action="{{ route('disposition.complete', $data->id) }}"

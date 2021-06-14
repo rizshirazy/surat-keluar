@@ -40,7 +40,7 @@
                                     <input type="text" id="date" name="date"
                                            class="form-control datepicker @error('date') is-invalid @enderror"
                                            data-provide="datepicker"
-                                           value="{{ old('date') ?? Carbon\Carbon::parse($data->date)->format('d-m-Y') }} ">
+                                           value="{{ old('date') ?? $data->date_formatted }} ">
 
                                     @error('date')
                                     <span class="invalid-feedback" role="alert">
@@ -203,7 +203,7 @@
                         <div class="col">
                             @if ($data->status == 'BARU')
                             <button type="button" class="btn btn-success px-3"
-                                    onclick="updateData()">Simpan</button>
+                                    onclick="updateData()">Perbarui</button>
                             <button type="button" class="btn btn-primary px-3"
                                     onclick="createDisposition()">Disposisi</button>
                             @endif

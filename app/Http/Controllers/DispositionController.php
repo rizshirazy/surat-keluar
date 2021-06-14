@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Disposition;
+use App\Http\Requests\CompleteDispositionRequest;
 use App\Http\Requests\CreateDispositionRequest;
 use App\Http\Requests\UpdateDispositionRequest;
 use App\Inbox;
@@ -133,9 +134,10 @@ class DispositionController extends Controller
      * @param  $id id of disposition
      * @return \Illuminate\Http\Response
      */
-    public function complete(Request $request, $id)
+    public function complete(CompleteDispositionRequest $request, $id)
     {
-        $data = $request->all();
+
+        $data = $request->validated();
 
         $update = Disposition::findOrFail($id);
         $update->update([

@@ -9,7 +9,7 @@
                     <div class="d-flex justify-content-center">
                         <img src="{{ asset('images/logo.png')}}" alt="" style="width: 10em;">
                     </div>
-                    <h3 class="text-center">Sistem Informasi Surat Keluar</h3>
+                    <h3 class="text-center">Sistem Informasi Tata Naskah Dinas</h3>
                     <h4 class="text-center mb-4">Pengadilan Agama Mentok</h4>
                     <form method="POST" action="{{ route('login') }}">
                         @csrf

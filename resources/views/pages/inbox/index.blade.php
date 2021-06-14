@@ -45,7 +45,7 @@
                                                 <th>Index</th>
                                                 <th>Nomor Surat</th>
                                                 <th>Tanggal Surat</th>
-                                                <th>Kode Surat</th>
+                                                <th>Sifat Surat</th>
                                                 <th>Perihal</th>
                                                 <th>Asal</th>
                                                 <th>Status</th>
@@ -107,7 +107,7 @@
             { data : 'index', name: 'index', className: 'text-center' },
             { data : 'reff', name: 'reff', width: '120' },
             { data : 'date', name: 'date', width: '80' },
-            { data : 'category', name: 'category' },
+            { data : 'type', name: 'type' },
             { data : 'subject', name: 'subject', width: '200' },
             { data : 'origin', name: 'origin', width: '200' },
             { data : 'status', name: 'status' },

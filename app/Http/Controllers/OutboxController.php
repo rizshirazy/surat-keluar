@@ -12,7 +12,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 
 class OutboxController extends Controller
@@ -34,15 +33,32 @@ class OutboxController extends Controller
                 ->editColumn('index', function ($item) {
                     return  $item->index . $item->suffix;
                 })
+                ->editColumn('subject', function ($item) {
+                    $confidential = $item->type_id == 2 && Auth::id() != $item->user_id;
+                    return $confidential ? '' :  $item->subject;
+                })
+                ->editColumn('destination', function ($item) {
+                    $confidential = $item->type_id == 2 && Auth::id() != $item->user_id;
+                    return $confidential ? '' :  $item->destination;
+                })
+                ->editColumn('reff', function ($item) {
+                    $confidential = $item->type_id == 2 && Auth::id() != $item->user_id;
+                    return $confidential ? '' :  $item->reff;
+                })
                 ->editColumn('document', function ($item) {
-                    if ($item->document) {
-                        return  '<a href="' . Storage::url($item->document) . '" target="_blank" class="btn btn-light text-danger" title="Lihat"><i class="fas fa-file-pdf"></i></a>';
-                    } else {
+                    $confidential = $item->type_id == 2 && Auth::id() != $item->user_id;
+
+                    if (!$item->document || $confidential) {
                         return '';
                     }
+
+                    return  '<a href="' . Storage::url($item->document) . '" target="_blank" class="btn btn-light text-danger" title="Lihat"><i class="fas fa-file-pdf"></i></a>';
                 })
                 ->addColumn('category', function ($item) {
-                    return $item->category->code . " " . $item->category->name;
+                    $confidential = $item->type_id == 2 && Auth::id() != $item->user_id;
+
+                    return $confidential ? ''
+                        : $item->category->code . " " . $item->category->name;
                 })
                 ->addColumn('action', function ($item) {
                     $action = '';
@@ -111,8 +127,11 @@ class OutboxController extends Controller
      */
     public function show(Outbox $outbox)
     {
+        $confidential = $outbox->type_id == 2 && Auth::id() != $outbox->user_id;
+
         return view('pages.outbox.show', [
-            'data' => $outbox
+            'data' => $outbox,
+            'confidential' => $confidential
         ]);
     }
 

@@ -20,7 +20,8 @@ function romanic_number($integer, $upcase = true)
     return $return;
 }
 
-function role($role){
+function role($role)
+{
 
     if (Auth::check()) {
         $user_role = Auth::user()->role->name;
@@ -30,7 +31,6 @@ function role($role){
          *  ADMIN
          *  PETUGAS
          *  PENGGUNA
-         * 
          */
 
         if (strtoupper($user_role) == strtoupper($role)) {
@@ -38,7 +38,7 @@ function role($role){
         }
 
         return false;
-    } 
+    }
 
     return false;
 }

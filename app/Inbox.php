@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -21,6 +22,14 @@ class Inbox extends Model
         'user_id',
         'document',
         'status',
+    ];
+
+    protected $appends = [
+        'user_disposition',
+        'date_locale',
+        'created_at_locale',
+        'updated_at_locale',
+        'date_formatted'
     ];
 
     /**
@@ -61,5 +70,29 @@ class Inbox extends Model
     public function disposition()
     {
         return $this->hasMany(Disposition::class, 'mail_id', 'id');
+    }
+
+    public function getUserDispositionAttribute()
+    {
+        return Disposition::select('user_id')->where('mail_id', $this->id)->get()->implode('user_id', ',');
+    }
+
+    public function getDateLocaleAttribute()
+    {
+        return Carbon::parse($this->date)->isoFormat('D MMMM Y');
+    }
+
+    public function getCreatedAtLocaleAttribute()
+    {
+        return Carbon::parse($this->created_at)->isoFormat('D MMMM Y');
+    }
+    public function getUpdatedAtLocaleAttribute()
+    {
+        return Carbon::parse($this->updated_at)->isoFormat('D MMMM Y');
+    }
+
+    public function getDateFormattedAttribute()
+    {
+        return Carbon::parse($this->date)->format('d-m-Y');
     }
 }

@@ -27,6 +27,11 @@
         font-size: inherit;
     }
 
+    .table th,
+    .table td {
+        padding: 0.25rem !important;
+    }
+
     @media print {
 
         body *,
@@ -49,11 +54,6 @@
         td {
             border: solid #000 !important;
             border-width: 0 1px 1px 0 !important;
-        }
-
-        .table th,
-        .table td {
-            padding: 0.25rem !important;
         }
 
         table.table.table-borderless {
@@ -106,51 +106,57 @@
                         </table>
                         <table class="table table-borderless">
                             <tr>
-                                <th style="width: 15%">Nomor Agenda</th>
-                                <td style="width: 40%">: {{ $data->index }}</td>
-                                <th style="width: 15%">Sifat Surat</th>
-                                <td style="width: 30%">: {{ $data->type->name }}</td>
+                                <th
+                                    style="width: 15%; vertical-align: bottom;">
+                                    Nomor Urut</th>
+                                <td style="width: 40%; vertical-align: bottom">:
+                                    <span
+                                          style="font-size: 24px; font-weight: bold; font-family: Arial, Helvetica, sans-serif">
+                                        {{ $data->index }}</span>
+                                </td>
+
+                                <th style="width: 15%; vertical-align: bottom">Kode</th>
+                                <td style="width: 30%; vertical-align: bottom">:
+                                    <span
+                                          style="font-size: 24px; font-weight: bold; font-family: Arial, Helvetica, sans-serif">
+                                        {{ $data->category->group->code }}</span>
+                                </td>
                             </tr>
                             <tr>
-                                <th>Tanggal Penerimaan</th>
-                                <td>: {{ Carbon\Carbon::parse($data->created_at)->locale('id')->format('d F Y') }}</td>
-                                <th>Tanggal Penyelesaian</th>
-                                <td>:
-                                    {{ Carbon\Carbon::parse($data->updated_at)->locale('id')->format('d F Y') }}
-                                </td>
+                                <th>Tanggal Surat</th>
+                                <td>: {{ $data->date_locale }} </td>
+                                <th>Tgl. Penerimaan</th>
+                                <td>: {{ $data->created_at_locale }}</td>
                             </tr>
                             <tr>
                                 <th>Nomor Surat</th>
                                 <td>: {{ $data->reff }}</td>
-                                <th>Tanggal Surat</th>
-                                <td>:
-                                    {{ Carbon\Carbon::parse($data->date)->locale('id')->format('d F Y') }}
-                                </td>
+                                <th>Tgl. Penyelesaian</th>
+                                <td>: {{ $data->updated_at_locale }} </td>
                             </tr>
                             <tr>
                                 <th>Perihal</th>
-                                <td>: {{ $data->subject }}</td>
-                                <th>Kode Surat</th>
-                                <td>: {{ $data->category['code']." - ".$data->category['name']}}</td>
+                                <td colspan="3">: {{ $data->subject }}</td>
                             </tr>
                             <tr>
-                                <th>Asal Surat</th>
+                                <th>Asal</th>
                                 <td>: {{ $data->origin }}</td>
-                                <th>Lampiran</th>
-                                <td>: {{ $data->attachments ?? '-' }}</td>
+                                <th>Sifat</th>
+                                <td>: {{ $data->type->name }}</td>
                             </tr>
                             <tr>
-                                <th>Nama Petugas</th>
-                                <td colspan="3">: {{ $data->user->name }}</td>
+                                <th>Lampiran</th>
+                                <td colspan="3">: {{ $data->attachments ?? '-' }}</td>
                             </tr>
                         </table>
 
-                        <h5 class="mt-5">Disposisi</h5>
+                        <h5 class="mt-5">Diteruskan Kepada</h5>
                         <table class="table">
                             <thead>
                                 <tr>
                                     <th class="text-header">No</th>
                                     <th class="text-header">Pegawai</th>
+                                    <th class="text-header">Tanggal/Waktu</th>
                                     <th class="text-header">Catatan</th>
                                 </tr>
                             </thead>
@@ -163,10 +169,12 @@
                                         <div>
                                             {{ $item->user->name }}
                                         </div>
-                                        <div style="margin-bottom: 30px;">
+                                        <div>
                                             {{ $item->user->position }}
                                         </div>
-                                        <div class="text-muted">
+                                    </td>
+                                    <td>
+                                        <div class="text-muted text-center">
                                             <em>{{ $item->updated_at }}</em>
                                         </div>
                                     </td>
@@ -177,6 +185,16 @@
 
                                 @endforelse
                             </tbody>
+                        </table>
+
+                        <div style="border-top: 3px dashed black; margin: 50px 0px"></div>
+
+                        <table class="table table-borderless">
+                            <tr>
+                                <td>
+                                    <div class="text-subheader">KARTU KENDALI</div>
+                                </td>
+                            </tr>
                         </table>
                     </div>
                     <a href="{{ route('inbox.index') }}" class="btn btn-light px-3">Kembali</a>
@@ -191,7 +209,7 @@
 <script>
     $(document).ready(function(){
         setTimeout(() => {
-            window.print();
+            // window.print();
         }, 1000);
     });
 </script>

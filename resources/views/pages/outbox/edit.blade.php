@@ -107,6 +107,21 @@
 
                             <div class="col-md-6">
                                 <div class="form-group">
+                                    <label for="type_id">Sifat Surat</label>
+                                    <select name="type_id" id="type_id"
+                                            class="form-control select2 @error('type_id') is-invalid @enderror">
+                                        <option value="{{ $data->type_id }}">{{ $data->type['name']}}</option>
+                                    </select>
+                                    @error('type_id')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
                                     <label for="document">Dokumen</label>
                                     @if ($data->document)
                                     <a href="{{ Storage::url($data->document) }}" target="_blank"
@@ -144,9 +159,12 @@
                             <div class="col">
                                 <button type="submit" class="btn btn-success px-3 mr-1">Simpan</button>
                                 <a href="{{ route('outbox.index') }}" class="btn btn-light px-3">Kembali</a>
+
+                                @if (role('PENGGUNA'))
                                 <button type="button" class="btn btn-outline-danger px-3 float-right"
                                         onclick="onDelete()">
                                     Hapus</button>
+                                @endif
                             </div>
                         </div>
                     </form>
@@ -173,6 +191,26 @@
             autoclose: true,
             todayHighlight: true,
             daysOfWeekHighlighted: [0],
+        });
+
+        $('#type_id').select2({
+            ajax: {
+                placeholder: '-- Pilih --',
+                    dalay: 100,
+                        url: '{{ route('api.type.populate') }}',
+                        dataType: 'json',
+                        type: 'POST',
+                        data: function (params){
+                        return {
+                            q: params.term,
+                            };
+                        },
+                        processResults: function (data) {
+                        return {
+                        results: data.items
+                    };
+                }
+            }
         });
 
         $('#category_id').select2({

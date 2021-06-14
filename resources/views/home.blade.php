@@ -1,6 +1,16 @@
 @extends('layouts.app')
 
 @section('content')
+<style>
+    .clickable-row {
+        cursor: pointer;
+    }
+
+    .clickable-row:hover {
+        background-color: rgba(0, 0, 0, 0.1)
+    }
+</style>
+
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-12">
@@ -12,17 +22,9 @@
                     @endphp
 
                     <div class="row">
-                        <div class="col-md-4">
-                            <div class="card text-white shadow" style="border: none; background-color: #118ab2">
-                                <div class="card-body">
-                                    <span>Surat Keluar Tahun Ini</span>
-                                    <h3 class="mt-2">{{ App\Outbox::whereYear('date', date('Y'))->count() }}</h3>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-md-4">
-                            <div class="card text-white shadow" style="border: none; background-color: #ef476f">
+                        <div class="col-md-3">
+                            <div class="card text-white shadow"
+                                 style="border: none; background-color:  #ff6384">
                                 <div class="card-body">
                                     <span>Surat Keluar Bulan Ini</span>
                                     <h3 class="mt-2">
@@ -32,20 +34,43 @@
                             </div>
                         </div>
 
-                        <div class="col-md-4">
-                            <div class="card shadow" style="border: none; background-color: #ffd166">
+                        <div class="col-md-3">
+                            <div class="card text-white shadow"
+                                 style="border: none; background-color: #36a2eb">
                                 <div class="card-body">
-                                    <span>Surat Keluar Tanpa Salinan</span>
+                                    <span>Surat Masuk Bulan Ini</span>
                                     <h3 class="mt-2">
-                                        {{ App\Outbox::whereYear('date', date('Y'))->whereNull('document')->count() }}
+                                        {{ App\Inbox::whereYear('created_at', date('Y'))->whereMonth('created_at', date('m'))->count() }}
+                                    </h3>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="card text-white shadow"
+                                 style="border: none; background-color: #ffce56 ">
+                                <div class="card-body">
+                                    <span>Surat Keluar Tahun Ini</span>
+                                    <h3 class="mt-2">{{ App\Outbox::whereYear('date', date('Y'))->count() }}</h3>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="card text-white shadow"
+                                 style="border: none; background-color: #4bc0c0">
+                                <div class="card-body">
+                                    <span>Surat Masuk Tahun Ini</span>
+                                    <h3 class="mt-2">
+                                        {{ App\Inbox::whereYear('created_at', date('Y'))->count() }}
                                     </h3>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="row mt-5">
-                        <div class="col mx-5">
+                    <div class="row mt-4">
+                        <div class="col mx-auto">
                             <canvas id="groupCategoryChart"></canvas>
                         </div>
                     </div>
@@ -70,23 +95,70 @@
 
                     @endphp
 
-
                     <div class="row mt-5">
-                        <div class="col-md-12">
-                            <a href="{{ route('outbox.create') }}"
-                               class="btn btn-success px-4 my-3 float-right">
-                                <i class="fas fa-plus-circle mr-3"></i> Tambah Surat Keluar</a>
+                        <div class="col">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h4 class="mb-3">Surat Yang Perlu Disposisi Anda</h4>
+                                    @php
+                                    $dispositions = App\Disposition::select(
+                                    'dispositions.id as d_id',
+                                    'inboxes.*'
+                                    )
+                                    ->join('inboxes', 'inboxes.id', '=', 'dispositions.mail_id')
+                                    ->where('dispositions.status', 'OPEN')
+                                    ->where('dispositions.user_id', Auth::id())
+                                    ->get();
+                                    @endphp
+
+                                    <div class="table-responsive">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th class="text-center">Nomor Surat</th>
+                                                    <th class="text-center">Tanggal</th>
+                                                    <th class="text-center">Perihal</th>
+                                                    <th class="text-center">Asal Surat</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @forelse ($dispositions as $item)
+                                                <tr class="clickable-row" title="Disposisi"
+                                                    data-href="{{ route('disposition.edit', $item->d_id) }}">
+                                                    <td>{{$item->reff}}</td>
+                                                    <td class="text-center">
+                                                        {{ Carbon\Carbon::parse($item->date)->format('d-m-Y') }}</td>
+                                                    <td>{{ $item->subject }}</td>
+                                                    <td>{{ $item->origin }}</td>
+                                                </tr>
+                                                @empty
+                                                <tr>
+                                                    <td class="text-muted text-center" colspan="4">
+                                                        <em>Tidak Ada Data</em>
+                                                    </td>
+                                                </tr>
+                                                @endforelse
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
+                    </div>
 
+                    <div class="row mt-3">
                         <div class="col-md-12">
-
                             @php
                             $outboxes = App\Outbox::latest()->limit(5)->get();
                             @endphp
-
                             <div class="card">
                                 <div class="card-body">
-                                    <h4 class="mb-3">5 Surat Keluar Terakhir</h4>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h4 class="mb-3">5 Surat Keluar Terakhir</h4>
+                                        <a href="{{ route('outbox.create') }}"
+                                           class="btn btn-success px-4 mt-1 mb-3 float-right">
+                                            <i class="fas fa-plus-circle mr-3"></i> Tambah Surat Keluar</a>
+                                    </div>
 
                                     <div class="table-responsive">
                                         <table class="table">
@@ -99,8 +171,8 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @if (count($outboxes) > 0)
-                                                @foreach ($outboxes as $item)
+
+                                                @forelse ($outboxes as $item)
                                                 <tr>
                                                     <td>{{ $item->reff }}</td>
                                                     <td class="text-center">
@@ -109,9 +181,13 @@
                                                     <td>{{ $item->subject }}</td>
                                                     <td>{{ $item->destination }}</td>
                                                 </tr>
-                                                @endforeach
-                                                @else
-                                                @endif
+                                                @empty
+                                                <tr>
+                                                    <td class="text-muted text-center" colspan="4">
+                                                        <em>Tidak Ada Data</em>
+                                                    </td>
+                                                </tr>
+                                                @endforelse
                                             </tbody>
                                         </table>
                                     </div>
@@ -129,6 +205,12 @@
 
 @push('script-after')
 <script>
+    $(document).ready(function(){
+        $('.clickable-row').click(function(){
+            window.location = $(this).data('href');
+        });
+    });
+
     const ctx = document.getElementById('groupCategoryChart');
     const myChart = new Chart(ctx, {
         type: 'bar',

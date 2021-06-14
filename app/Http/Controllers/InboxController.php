@@ -26,20 +26,38 @@ class InboxController extends Controller
 
             return DataTables::of($query)
                 ->editColumn('date', function ($item) {
-                    return  date('d-m-Y', strtotime($item->date));
+                    return  $item->date_formatted;
                 })
                 ->editColumn('index', function ($item) {
                     return  $item->index . $item->suffix;
                 })
+                ->editColumn('subject', function ($item) {
+                    $confidential = $item->type_id == 2 && !in_array(Auth::id(), explode(',', $item->user_disposition));
+
+                    return $confidential ? '' : $item->subject;
+                })
+                ->editColumn('origin', function ($item) {
+                    $confidential = $item->type_id == 2 && !in_array(Auth::id(), explode(',', $item->user_disposition));
+
+                    return $confidential ? '' : $item->origin;
+                })
+                ->editColumn('reff', function ($item) {
+                    $confidential = $item->type_id == 2 && !in_array(Auth::id(), explode(',', $item->user_disposition));
+
+                    return $confidential ? '' : $item->reff;
+                })
                 ->editColumn('document', function ($item) {
-                    if ($item->document) {
-                        return  '<a href="' . Storage::url($item->document) . '" target="_blank" class="btn btn-light text-danger" title="Lihat"><i class="fas fa-file-pdf"></i></a>';
-                    } else {
+
+                    $confidential = $item->type_id == 2 && !in_array(Auth::id(), explode(',', $item->user_disposition));
+
+                    if (!$item->document || $confidential) {
                         return '';
                     }
+
+                    return  '<a href="' . Storage::url($item->document) . '" target="_blank" class="btn btn-light text-danger" title="Lihat"><i class="fas fa-file-pdf"></i></a>';
                 })
-                ->addColumn('category', function ($item) {
-                    return $item->category->code . " " . $item->category->name;
+                ->addColumn('type', function ($item) {
+                    return $item->type->name;
                 })
                 ->addColumn('action', function ($item) {
                     $action = '';
@@ -84,10 +102,9 @@ class InboxController extends Controller
     {
 
         $data = $request->all();
-        $today = Carbon::now()->startOfDay();
         $date = Carbon::parse($data['date']);
 
-        $last_index = Inbox::whereYear('date', $today->year)
+        $last_index = Inbox::whereYear('created_at', date('Y'))
             ->orderBy('index', 'desc')
             ->first();
 
@@ -97,11 +114,11 @@ class InboxController extends Controller
 
             $extention = $file->getClientOriginalExtension();
 
-            if (in_array($extention, ['pdf'])) {
-                $data['document'] = $file->store('assets/inbox', 'public');
-            } else {
+            if (!in_array($extention, ['pdf'])) {
                 return back()->withInput()->withErrors(['document' => 'Dokumen harus dalam bentuk pdf']);
             }
+
+            $data['document'] = $file->store('assets/inbox', 'public');
         }
 
         $data['index'] = $next_index;
@@ -121,9 +138,11 @@ class InboxController extends Controller
      */
     public function show(Inbox $inbox)
     {
+        $confidential = $inbox->type_id == 2 && !in_array(Auth::id(), explode(',', $inbox->user_disposition));
+
         return view('pages.inbox.show', [
             'data' => $inbox,
-            'disposition' => Disposition::where('mail_id', $inbox->id)->get()
+            'confidential' => $confidential
         ]);
     }
 
@@ -155,11 +174,11 @@ class InboxController extends Controller
 
             $extention = $file->getClientOriginalExtension();
 
-            if (in_array($extention, ['pdf'])) {
-                $data['document'] = $file->store('assets/inbox', 'public');
-            } else {
+            if (!in_array($extention, ['pdf'])) {
                 return back()->withInput()->withErrors(['document' => 'Dokumen harus dalam bentuk pdf']);
             }
+
+            $data['document'] = $file->store('assets/inbox', 'public');
         }
 
         $inbox->update($data);

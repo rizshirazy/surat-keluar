@@ -23,6 +23,7 @@ class Outbox extends Model
         'document',
         'category_id',
         'user_id',
+        'type_id'
     ];
 
 
@@ -34,6 +35,16 @@ class Outbox extends Model
     public function category()
     {
         return $this->hasOne(Category::class, 'id', 'category_id');
+    }
+
+    /**
+     * Get the type associated with the Outbox
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function type()
+    {
+        return $this->hasOne(Type::class, 'id', 'type_id');
     }
 
     /**

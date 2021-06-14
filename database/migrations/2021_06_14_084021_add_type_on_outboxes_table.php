@@ -1,0 +1,36 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class AddTypeOnOutboxesTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::table('outboxes', function (Blueprint $table) {
+            $table->foreignId('type_id')->nullable();
+
+            $table->foreign('type_id')->references('id')->on('types')->onDelete('set null');
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::table('outboxes', function (Blueprint $table) {
+            $table->dropColumn('type_id');
+
+            $table->dropForeign('outboxes_type_id_foreign');
+        });
+    }
+}
