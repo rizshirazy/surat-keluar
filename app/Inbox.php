@@ -5,6 +5,7 @@ namespace App;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Auth;
 
 class Inbox extends Model
 {
@@ -29,7 +30,8 @@ class Inbox extends Model
         'date_locale',
         'created_at_locale',
         'updated_at_locale',
-        'date_formatted'
+        'date_formatted',
+        'confidential'
     ];
 
     /**
@@ -94,5 +96,14 @@ class Inbox extends Model
     public function getDateFormattedAttribute()
     {
         return Carbon::parse($this->date)->format('d-m-Y');
+    }
+
+    public function getConfidentialAttribute()
+    {
+        if (!Auth::check()) {
+            return true;
+        }
+
+        return $this->type_id == 2 && !in_array(Auth::id(), explode(',', $this->user_disposition));
     }
 }

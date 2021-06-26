@@ -2,12 +2,12 @@
 
 namespace App\Exports;
 
-use App\Outbox;
+use App\Category;
+use App\Inbox;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\URL;
 use Maatwebsite\Excel\Concerns\FromView;
-use Maatwebsite\Excel\Concerns\WithColumnFormatting;
-use Maatwebsite\Excel\Concerns\WithColumnWidths;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithDrawings;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithStyles;
@@ -17,20 +17,17 @@ use Maatwebsite\Excel\Events\BeforeExport;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
-use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class OutboxDetailExport implements
+class InboxSummaryExport implements
     FromView,
-    WithColumnFormatting,
-    WithColumnWidths,
     WithDrawings,
     WithEvents,
     WithStyles,
-    WithTitle
+    WithTitle,
+    ShouldAutoSize
 {
-
     public function __construct($start_date, $end_date)
     {
         $this->start_date = $start_date;
@@ -42,7 +39,47 @@ class OutboxDetailExport implements
      */
     public function title(): string
     {
-        return 'Data';
+        return 'Ringkasan';
+    }
+
+    public function view(): View
+    {
+        $SD = $this->start_date ? $this->start_date->format('Y-m-d') : null;
+        $ED = $this->end_date ? $this->end_date->format('Y-m-d') : null;
+
+        if ($SD && $ED) {
+            $totalOutbox = Inbox::selectRaw('category_id, count(1) qty')
+                ->where('created_at', '>=', $SD)
+                ->where('created_at', '<=', $ED)
+                ->groupBy('category_id');
+            $periode = $this->start_date->format('d-m-Y') . ' s.d ' . $this->end_date->format('d-m-Y');
+        } else if ($SD) {
+            $totalOutbox = Inbox::selectRaw('category_id, count(1) qty')
+                ->where('created_at', '>=', $SD)
+                ->groupBy('category_id');
+            $periode = $this->start_date->format('d-m-Y') . ' s.d ' . date('d-m-Y');
+        } else if ($ED) {
+            $totalOutbox = Inbox::selectRaw('category_id, count(1) qty')
+                ->where('created_at', '<=', $ED)
+                ->groupBy('category_id');
+            $periode = 'Awal s.d ' . $this->end_date->format('d-m-Y');
+        } else {
+            $totalOutbox = Inbox::selectRaw('category_id, count(1) qty')
+                ->whereYear('created_at', date('Y'))
+                ->groupBy('category_id');
+            $periode = 'Tahun ' . date('Y');
+        }
+
+        $data = Category::select('id', 'name', 'code', 'qty')
+            ->leftJoinSub($totalOutbox, 'totalOutbox', function ($join) {
+                $join->on('totalOutbox.category_id', '=', 'categories.id');
+            })->orderBy('id', 'asc')
+            ->get();
+
+        return view('exports.inboxes-summary', [
+            'data' => $data,
+            'periode' => $periode
+        ]);
     }
 
     public function registerEvents(): array
@@ -77,56 +114,6 @@ class OutboxDetailExport implements
         ];
     }
 
-    public function view(): View
-    {
-        $SD = $this->start_date ? $this->start_date->format('Y-m-d') : null;
-        $ED = $this->end_date ? $this->end_date->format('Y-m-d') : null;
-
-        if ($SD && $ED) {
-            $data = Outbox::where('date', '>=', $SD)
-                ->where('date', '<=', $ED)
-                ->get();
-            $periode = $this->start_date->format('d-m-Y') . ' s.d ' . $this->end_date->format('d-m-Y');
-        } else if ($SD) {
-            $data = Outbox::where('date', '>=', $SD)
-                ->get();
-            $periode = $this->start_date->format('d-m-Y') . ' s.d ' . date('d-m-Y');
-        } else if ($ED) {
-            $data = Outbox::where('date', '<=', $ED)
-                ->get();
-            $periode = 'Awal s.d ' . $this->end_date->format('d-m-Y');
-        } else {
-            $data = Outbox::whereYear('date', date('Y'))->get();
-            $periode = 'Tahun ' . date('Y');
-        }
-
-        return view('exports.outboxes', [
-            'data' => $data,
-            'periode' => $periode
-        ]);
-    }
-
-    public function columnFormats(): array
-    {
-        return [
-            'C' => NumberFormat::FORMAT_DATE_DDMMYYYY,
-        ];
-    }
-
-    public function columnWidths(): array
-    {
-        return [
-            'A' => 6,
-            'B' => 28,
-            'C' => 15,
-            'D' => 10,
-            'E' => 6.3,
-            'F' => 50,
-            'G' => 33,
-            'H' => 25,
-        ];
-    }
-
     public function styles(Worksheet $sheet)
     {
         $highestRow = $sheet->getHighestDataRow();
@@ -140,6 +127,7 @@ class OutboxDetailExport implements
 
         $sheet->getRowDimension(1)->setRowHeight(23);
         $sheet->getRowDimension(2)->setRowHeight(23);
+        $sheet->getRowDimension(6)->setRowHeight(15);
 
         return [
             1   =>
@@ -168,7 +156,8 @@ class OutboxDetailExport implements
                     'bold' => true
                 ],
                 'alignment' => [
-                    'horizontal' => Alignment::VERTICAL_CENTER,
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_DISTRIBUTED,
                 ],
                 'fill' => [
                     'fillType' => Fill::FILL_SOLID,
@@ -178,12 +167,6 @@ class OutboxDetailExport implements
                 ]
             ],
             'A'  =>
-            [
-                'alignment' => [
-                    'horizontal' => Alignment::VERTICAL_CENTER,
-                ]
-            ],
-            'C:E'  =>
             [
                 'alignment' => [
                     'horizontal' => Alignment::VERTICAL_CENTER,
@@ -215,6 +198,11 @@ class OutboxDetailExport implements
                     'vertical' => Alignment::VERTICAL_TOP,
                 ],
             ],
+            $highestRow => [
+                'font' => [
+                    'bold' => true
+                ],
+            ]
         ];
     }
 

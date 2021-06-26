@@ -39,8 +39,9 @@ Route::middleware(['auth'])->group(function () {
 
     Route::resource('inbox', 'InboxController')->names('inbox');
     Route::get('inbox/{id}/print', 'InboxController@print')->name('inbox.print');
+    Route::post('inbox/modal', 'InboxController@modal')->name('inbox.modal');
+    Route::post('inbox/report', 'InboxController@report')->name('inbox.report');
 
-    // Route::resource('disposition', 'DispositionController')->names('disposition');
     Route::prefix('disposition')->group(function () {
         Route::post('create', 'DispositionController@store')->name('disposition.store');
         Route::get('{id}/edit', 'DispositionController@edit')->name('disposition.edit');
@@ -52,4 +53,6 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('user', 'UserController')->names('user');
 
     Route::get('disposition/populate', 'DispositionController@populateByUser')->name('disposition.populate_by_user');
+    Route::view('change-password', 'auth.passwords.change')->name('password.change.view');
+    Route::post('change-password', 'UserController@change_password')->name('password.change.post');
 });

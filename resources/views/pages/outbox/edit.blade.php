@@ -40,7 +40,7 @@
                                     <input type="text" id="date" name="date"
                                            class="form-control datepicker @error('date') is-invalid @enderror"
                                            data-provide="datepicker"
-                                           value="{{ old('date') ?? Carbon\Carbon::parse($data->date)->format('d-m-Y') }}">
+                                           value="{{ old('date') ?? $data->date_formatted }}">
 
                                     @error('date')
                                     <span class="invalid-feedback" role="alert">
@@ -52,7 +52,7 @@
                                     {{-- Jika tanggal tidak bisa diedit --}}
                                     <input type="text" id="date" name="date"
                                            class="form-control" readonly
-                                           value="{{ Carbon\Carbon::parse($data->date)->format('d-m-Y') }}">
+                                           value="{{ $data->date_formatted }}">
                                     @endif
                                 </div>
                             </div>

@@ -2,10 +2,11 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\MatchOldPassword;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
-class CompleteDispositionRequest extends FormRequest
+class ChangePasswordRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,7 +26,9 @@ class CompleteDispositionRequest extends FormRequest
     public function rules()
     {
         return [
-            'notes' => 'required'
+            'current_password'      => ['required', new MatchOldPassword],
+            'new_password'          => ['required', 'min:6'],
+            'new_password_confirm'  => ['same:new_password']
         ];
     }
 
@@ -37,7 +40,10 @@ class CompleteDispositionRequest extends FormRequest
     public function messages()
     {
         return [
-            'notes.required' => 'Isi disposisi tidak boleh kosong'
+            'current_password.required' => 'Password lama tidak boleh kosong',
+            'new_password.required' => 'Password baru tidak boleh kosong',
+            'new_password.min' => 'Password baru tidak kurang dari :min karakter',
+            'new_password_confirm.same' => 'Harus sama dengan password baru',
         ];
     }
 }

@@ -2,7 +2,7 @@
 
 namespace App\Exports;
 
-use App\Outbox;
+use App\Inbox;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\URL;
 use Maatwebsite\Excel\Concerns\FromView;
@@ -21,7 +21,7 @@ use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class OutboxDetailExport implements
+class InboxDetailExport implements
     FromView,
     WithColumnFormatting,
     WithColumnWidths,
@@ -83,24 +83,24 @@ class OutboxDetailExport implements
         $ED = $this->end_date ? $this->end_date->format('Y-m-d') : null;
 
         if ($SD && $ED) {
-            $data = Outbox::where('date', '>=', $SD)
-                ->where('date', '<=', $ED)
+            $data = Inbox::where('created_at', '>=', $SD)
+                ->where('created_at', '<=', $ED)
                 ->get();
             $periode = $this->start_date->format('d-m-Y') . ' s.d ' . $this->end_date->format('d-m-Y');
         } else if ($SD) {
-            $data = Outbox::where('date', '>=', $SD)
+            $data = Inbox::where('created_at', '>=', $SD)
                 ->get();
             $periode = $this->start_date->format('d-m-Y') . ' s.d ' . date('d-m-Y');
         } else if ($ED) {
-            $data = Outbox::where('date', '<=', $ED)
+            $data = Inbox::where('created_at', '<=', $ED)
                 ->get();
             $periode = 'Awal s.d ' . $this->end_date->format('d-m-Y');
         } else {
-            $data = Outbox::whereYear('date', date('Y'))->get();
+            $data = Inbox::whereYear('created_at', date('Y'))->get();
             $periode = 'Tahun ' . date('Y');
         }
 
-        return view('exports.outboxes', [
+        return view('exports.inboxes-detail', [
             'data' => $data,
             'periode' => $periode
         ]);

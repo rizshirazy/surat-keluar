@@ -34,21 +34,19 @@ class OutboxController extends Controller
                     return  $item->index . $item->suffix;
                 })
                 ->editColumn('subject', function ($item) {
-                    $confidential = $item->type_id == 2 && Auth::id() != $item->user_id;
-                    return $confidential ? '' :  $item->subject;
+                    return $item->confidential ? '' :  $item->subject;
                 })
                 ->editColumn('destination', function ($item) {
-                    $confidential = $item->type_id == 2 && Auth::id() != $item->user_id;
-                    return $confidential ? '' :  $item->destination;
+
+                    return $item->confidential ? '' :  $item->destination;
                 })
                 ->editColumn('reff', function ($item) {
-                    $confidential = $item->type_id == 2 && Auth::id() != $item->user_id;
-                    return $confidential ? '' :  $item->reff;
+
+                    return $item->confidential ? '' :  $item->reff;
                 })
                 ->editColumn('document', function ($item) {
-                    $confidential = $item->type_id == 2 && Auth::id() != $item->user_id;
 
-                    if (!$item->document || $confidential) {
+                    if (!$item->document || $item->confidential) {
                         return '';
                     }
 

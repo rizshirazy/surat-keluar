@@ -2,8 +2,10 @@
 
 namespace App;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Auth;
 
 class Outbox extends Model
 {
@@ -24,6 +26,12 @@ class Outbox extends Model
         'category_id',
         'user_id',
         'type_id'
+    ];
+
+    protected $appends = [
+        'date_locale',
+        'date_formatted',
+        'confidential'
     ];
 
 
@@ -55,5 +63,24 @@ class Outbox extends Model
     public function user()
     {
         return $this->hasOne(User::class, 'id', 'user_id');
+    }
+
+    public function getDateLocaleAttribute()
+    {
+        return Carbon::parse($this->date)->isoFormat('D MMMM Y');
+    }
+
+    public function getDateFormattedAttribute()
+    {
+        return Carbon::parse($this->date)->format('d-m-Y');
+    }
+
+    public function getConfidentialAttribute()
+    {
+        if (!Auth::check()) {
+            return true;
+        }
+
+        return $this->type_id == 2 && Auth::id() != $this->user_id;
     }
 }

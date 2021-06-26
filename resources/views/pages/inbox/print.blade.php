@@ -135,67 +135,126 @@
                                 <td>: {{ $data->updated_at_locale }} </td>
                             </tr>
                             <tr>
-                                <th>Perihal</th>
-                                <td colspan="3">: {{ $data->subject }}</td>
-                            </tr>
-                            <tr>
                                 <th>Asal</th>
                                 <td>: {{ $data->origin }}</td>
                                 <th>Sifat</th>
                                 <td>: {{ $data->type->name }}</td>
                             </tr>
                             <tr>
+                                <th>Perihal</th>
+                                <td colspan="3">: {{ $data->subject }}</td>
+                            </tr>
+                            <tr>
                                 <th>Lampiran</th>
                                 <td colspan="3">: {{ $data->attachments ?? '-' }}</td>
                             </tr>
-                        </table>
-
-                        <h5 class="mt-5">Diteruskan Kepada</h5>
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th class="text-header">No</th>
-                                    <th class="text-header">Pegawai</th>
-                                    <th class="text-header">Tanggal/Waktu</th>
-                                    <th class="text-header">Catatan</th>
-                                </tr>
-                            </thead>
-
-                            <tbody>
-                                @forelse ($data->disposition as $item)
-                                <tr>
-                                    <td class="text-header">{{ $loop->iteration }}</td>
-                                    <td>
+                            <tr>
+                                <th colspan="2">Isi Disposisi :</th>
+                                <th colspan="2">Diteruskan Kepada :</th>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    @foreach ($data->disposition->unique('notes')->reverse() as $item)
+                                    <div class="px-4 py-2">{{ $item->notes}}
+                                    </div>
+                                    @endforeach
+                                </td>
+                                <td colspan="2">
+                                    @foreach ($data->disposition->unique('user_id')->reverse() as $item)
+                                    <div class="px-4 py-1 d-flex">
+                                        <div class="mr-1">
+                                            {{ $loop->iteration }}.
+                                        </div>
                                         <div>
                                             {{ $item->user->name }}
-                                        </div>
-                                        <div>
+                                            <br>
                                             {{ $item->user->position }}
+                                            <span class="text-muted">
+                                                <em>({{ Carbon\Carbon::parse($item->updated_at)->format('d/m/y') }})</em>
+                                            </span>
                                         </div>
-                                    </td>
-                                    <td>
-                                        <div class="text-muted text-center">
-                                            <em>{{ $item->updated_at }}</em>
-                                        </div>
-                                    </td>
-                                    <td>{{ $item->notes}}</td>
-                                </tr>
-
-                                @empty
-
-                                @endforelse
-                            </tbody>
-                        </table>
-
-                        <div style="border-top: 3px dashed black; margin: 50px 0px"></div>
-
-                        <table class="table table-borderless">
-                            <tr>
-                                <td>
-                                    <div class="text-subheader">KARTU KENDALI</div>
+                                    </div>
+                                    @endforeach
                                 </td>
                             </tr>
+                            <tr style="border-top: 1px solid black">
+                                <th colspan="4" class="text-center font-weight-bold">
+                                    <div class="my-3" style="text-decoration: underline">
+                                        Sesudah digunakan harap segera dikembalikan
+                                    </div>
+                                </th>
+                            </tr>
+                            <tr>
+                                <td colspan="2">Kepada :</td>
+                                <td colspan="2">Tanggal :</td>
+                            </tr>
                         </table>
+
+                        <div style="border-top: 3px dashed black; margin: 50px 0px;"></div>
+
+                        <div style="position: relative">
+                            <img src="{{ asset('images/logo_pamentok.png') }}"
+                                 alt="logo pengadilan agama mentok"
+                                 style="width:75px; position: absolute; top: -25px; left: 50px; z-index: 99">
+                            <table class="table table-borderless" style="position: relative">
+                                <tr>
+                                    <td colspan="4">
+                                        <div class="text-subheader">KARTU KENDALI SURAT MASUK</div>
+                                        <div class="font-weight-bold text-center mb-3">PENGADILAN AGAMA MENTOK</div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th
+                                        style="width: 15%; vertical-align: bottom;">
+                                        Nomor Urut</th>
+                                    <td style="width: 40%; vertical-align: bottom">:
+                                        <span
+                                              style="font-size: 24px; font-weight: bold; font-family: Arial, Helvetica, sans-serif">
+                                            {{ $data->index }}</span>
+                                    </td>
+                                    <th style="width: 15%; vertical-align: bottom">Kode</th>
+                                    <td style="width: 30%; vertical-align: bottom">:
+                                        <span
+                                              style="font-size: 24px; font-weight: bold; font-family: Arial, Helvetica, sans-serif">
+                                            {{ $data->category->group->code }}</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Tanggal Surat</th>
+                                    <td>: {{ $data->date_locale }} </td>
+                                    <th>Tgl. Penerimaan</th>
+                                    <td>: {{ $data->created_at_locale }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Nomor Surat</th>
+                                    <td>: {{ $data->reff }}</td>
+                                    <th>Tgl. Penyelesaian</th>
+                                    <td>: {{ $data->updated_at_locale }} </td>
+                                </tr>
+                                <tr>
+                                    <th>Asal</th>
+                                    <td>: {{ $data->origin }}</td>
+                                    <th>Sifat</th>
+                                    <td>: {{ $data->type->name }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Perihal</th>
+                                    <td colspan="3">: {{ $data->subject }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Lampiran</th>
+                                    <td>: {{ $data->attachments ?? '-' }}</td>
+                                    <th>Pengolah</th>
+                                    <td>:</td>
+                                </tr>
+                                <tr>
+                                    <th>Catatan</th>
+                                    <td>:</td>
+                                    <th>Paraf</th>
+                                    <td>:</td>
+                                </tr>
+                            </table>
+                        </div>
                     </div>
                     <a href="{{ route('inbox.index') }}" class="btn btn-light px-3">Kembali</a>
                 </div>
@@ -209,7 +268,7 @@
 <script>
     $(document).ready(function(){
         setTimeout(() => {
-            // window.print();
+            window.print();
         }, 1000);
     });
 </script>

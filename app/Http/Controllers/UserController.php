@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Disposition;
+use App\Http\Requests\ChangePasswordRequest;
 use App\Http\Requests\CreateUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\User;
@@ -132,6 +133,18 @@ class UserController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function change_password(ChangePasswordRequest $request)
+    {
+        $data = $request->validated();
+
+        User::find(Auth::id())->update([
+            'password' => Hash::make($data['new_password'])
+        ]);
+
+        return redirect()->route('password.change.view')
+            ->with('success', 'Password anda berhasil diperbarui');
     }
 
     // API

@@ -151,7 +151,7 @@
         $("#mainModal .data").html('<div class="justify-content-center p-5 d-flex"><div class="dot-spin"></div></div>');
         $.ajax({
             type: "POST",
-            url: '{{ route('outbox.modal') }}',
+            url: '{{ route('inbox.modal') }}',
             data: "_token={{ csrf_token() }}&id=" + id + "&type=" + type + "",
             success: function (data) {
                 $("#mainModal .data").html(data);

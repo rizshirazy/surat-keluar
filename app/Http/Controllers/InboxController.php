@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Disposition;
+use App\Exports\InboxesExport;
 use App\Http\Requests\CreateInboxRequest;
 use App\Http\Requests\UpdateInboxRequest;
 use App\Inbox;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
@@ -32,28 +34,18 @@ class InboxController extends Controller
                     return  $item->index . $item->suffix;
                 })
                 ->editColumn('subject', function ($item) {
-                    $confidential = $item->type_id == 2 && !in_array(Auth::id(), explode(',', $item->user_disposition));
-
-                    return $confidential ? '' : $item->subject;
+                    return $item->confidential ? '' : $item->subject;
                 })
                 ->editColumn('origin', function ($item) {
-                    $confidential = $item->type_id == 2 && !in_array(Auth::id(), explode(',', $item->user_disposition));
-
-                    return $confidential ? '' : $item->origin;
+                    return $item->confidential ? '' : $item->origin;
                 })
                 ->editColumn('reff', function ($item) {
-                    $confidential = $item->type_id == 2 && !in_array(Auth::id(), explode(',', $item->user_disposition));
-
-                    return $confidential ? '' : $item->reff;
+                    return $item->confidential ? '' : $item->reff;
                 })
                 ->editColumn('document', function ($item) {
-
-                    $confidential = $item->type_id == 2 && !in_array(Auth::id(), explode(',', $item->user_disposition));
-
-                    if (!$item->document || $confidential) {
+                    if (!$item->document || $item->confidential) {
                         return '';
                     }
-
                     return  '<a href="' . Storage::url($item->document) . '" target="_blank" class="btn btn-light text-danger" title="Lihat"><i class="fas fa-file-pdf"></i></a>';
                 })
                 ->addColumn('type', function ($item) {
@@ -205,5 +197,26 @@ class InboxController extends Controller
         return view('pages.inbox.print', [
             'data' => $inbox
         ]);
+    }
+
+    public function report(Request $request)
+    {
+        $data = $request->all();
+        $start_date = $data['start_date'] ? Carbon::parse($request->input('start_date')) :  null;
+        $end_date = $data['end_date'] ? Carbon::parse($request->input('end_date')) : null;
+
+        return new InboxesExport($start_date, $end_date);
+    }
+
+    public function modal(Request $request)
+    {
+        $id = $request->input('id');
+        $type = $request->input('type');
+
+        switch ($type) {
+            case 'report':
+                return view('pages.inbox.modal-report');
+                break;
+        }
     }
 }

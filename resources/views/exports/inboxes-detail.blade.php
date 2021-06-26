@@ -1,7 +1,7 @@
 <table>
     <thead>
         <tr>
-            <th colspan="8">Laporan Surat Keluar</th>
+            <th colspan="8">Laporan Surat Masuk</th>
         </tr>
         <tr>
             <th colspan="8">Pengadilan Agama Mentok</th>
@@ -33,13 +33,20 @@
         @forelse ($data as $item)
         <tr>
             <td>{{ $loop->iteration }}</td>
-            <td>{{ $item->confidential ? '-' : $item->reff }}</td>
+            <td>
+                {{ !$item->confidential || role('PETUGAS') || role('SUPER ADMIN') ? $item->reff : '-' }}
+            </td>
             <td>{{ Carbon\Carbon::parse($item->date)->format('d/m/Y') }}</td>
             <td>{{ $item->type->name }}</td>
-            <td>{{ $item->confidential ? '-' : $item->category->group->code }}</td>
-            <td>{{ $item->confidential ? '-' : $item->subject }}</td>
-            <td>{{ $item->confidential ? '-' : $item->destination }}</td>
-            <td>{{ $item->confidential ? '-' : $item->user->name }}</td>
+            <td>
+                {{ !$item->confidential || role('PETUGAS') || role('SUPER ADMIN') ? $item->category->group->code : '-' }}
+            </td>
+            <td>
+                {{ !$item->confidential || role('PETUGAS') || role('SUPER ADMIN') ? $item->subject : '-' }}</td>
+            <td>
+                {{ !$item->confidential || role('PETUGAS') || role('SUPER ADMIN') ? $item->origin : '-' }}</td>
+            <td>
+                {{ !$item->confidential || role('PETUGAS') || role('SUPER ADMIN') ? $item->user->name : '-' }}</td>
         </tr>
         @empty
         <tr>

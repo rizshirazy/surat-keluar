@@ -28,9 +28,6 @@
                 <li class=" nav-item {{ (request()->is('user*')) ? 'active' : '' }}">
                     <a class="nav-link px-md-4" href="{{ route('user.index') }}">Pengguna</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link px-md-4" href="#">Pengaturan</a>
-                </li>
                 @endauth
             </ul>
 
@@ -46,6 +43,7 @@
                     </a>
 
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                        <a href="{{ route('password.change.view') }}" class="dropdown-item">Ganti Password</a>
                         <a class="dropdown-item" href="{{ route('logout') }}"
                            onclick="event.preventDefault();
                                                                                                          document.getElementById('logout-form').submit();">

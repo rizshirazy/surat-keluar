@@ -11,20 +11,21 @@
                     </div>
                     <h3 class="text-center">Sistem Informasi Tata Naskah Dinas</h3>
                     <h4 class="text-center mb-4">Pengadilan Agama Mentok</h4>
+
                     <form method="POST" action="{{ route('login') }}">
                         @csrf
 
                         <div class="form-group">
-                            <div class="d-flex justify-content-center">
+                            <div class="d-flex flex-column align-items-center justify-content-center">
                                 <input id="email" type="email"
                                        class="form-control col-md-8 @error('email') is-invalid @enderror"
                                        name="email" value="{{ old('email') }}" required autocomplete="email" autofocus
-                                       placeholder="E-mail Address">
+                                       placeholder="Alamat Email">
 
                                 @error('email')
-                                <span class="invalid-feedback" role="alert">
+                                <div class="invalid-feedback text-center" role="alert">
                                     <strong>{{ $message }}</strong>
-                                </span>
+                                </div>
                                 @enderror
                             </div>
                         </div>

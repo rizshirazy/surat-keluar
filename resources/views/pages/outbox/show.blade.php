@@ -18,9 +18,7 @@
                         </tr>
                         <tr>
                             <th class="bg-light" width="20%">Tanggal</th>
-                            <td class="bg-white">
-                                {{ Carbon\Carbon::parse($data->date)->locale('id_ID')->format('d F Y') }}
-                            </td>
+                            <td class="bg-white"> {{ $data->date_locale }} </td>
                         </tr>
                         <tr>
                             <th class="bg-light" width="20%">Kode Surat</th>
@@ -54,7 +52,7 @@
                         </tr>
                         <tr>
                             <th class="bg-light" width="20%">Nama Pegawai</th>
-                            <td class="bg-white">{{ $confidential ? '' : $data->user->name }}</td>
+                            <td class="bg-white">{{ $data->user->name }}</td>
                         </tr>
                     </table>
 
