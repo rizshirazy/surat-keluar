@@ -13,7 +13,8 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Laravel'),
+    'name' => env('APP_NAME', 'SITANAS'),
+    'dev' => env('APP_DEVELOPER', 'Muhammad Rizki, S.Si - 199308192020121003'),
 
     /*
     |--------------------------------------------------------------------------
@@ -122,6 +123,8 @@ return [
     'key' => env('APP_KEY'),
 
     'cipher' => 'AES-256-CBC',
+
+    'password_report' => env('REPORT_PASSWORD', 'adminsitanas'),
 
     /*
     |--------------------------------------------------------------------------

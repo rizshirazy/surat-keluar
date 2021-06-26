@@ -189,10 +189,11 @@ class InboxController extends Controller
         //
     }
 
-
-    public function print($id)
+    public function print(Inbox $inbox)
     {
-        $inbox = Inbox::findOrFail($id);
+        if ($inbox->status != 'SELESAI') {
+            abort(404);
+        }
 
         return view('pages.inbox.print', [
             'data' => $inbox

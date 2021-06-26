@@ -65,14 +65,14 @@ class InboxDetailExport implements
                 ];
 
                 $event->sheet->mergeCells(sprintf('A%d:%s%d', $last_row, $last_column, $last_row));
-                $event->sheet->setCellValue(sprintf('A%d', $last_row), env('APP_NAME', 'SISUAR') . ' ' . URL::to('/') . ' | ' . env('APP_DEVELOPER', 'Muhammad Rizki, S.Si') . ' - 2021');
+                $event->sheet->setCellValue(sprintf('A%d', $last_row), config('app.name')  . ' ' . URL::to('/') . ' | ' . config('app.dev') . ' - 2021');
                 $event->sheet->getStyle(sprintf('A%d', $last_row))->applyFromArray($style_text_center);
             },
             BeforeExport::class => function (BeforeExport $event) {
                 $event->writer->getDelegate()->getSecurity()->setLockWindows(true);
                 $event->writer->getDelegate()->getSecurity()->setLockStructure(true);
-                $event->writer->getDelegate()->getSecurity()->setWorkbookPassword("admin");
-                $event->writer->getProperties()->setCreator(env('APP_DEVELOPER', 'Muhammad Rizki, S.Si'));
+                $event->writer->getDelegate()->getSecurity()->setWorkbookPassword(config('app.password_report'));
+                $event->writer->getProperties()->setCreator('Muhammad Rizki, S.Si');
             }
         ];
     }

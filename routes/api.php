@@ -14,10 +14,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
 Route::post('category/populate', 'CategoryController@populate')->name('api.category.populate');
 Route::post('category/detail', 'CategoryController@detail')->name('api.category.detail');
 Route::post('group-category/populate', 'GroupCategoryController@populate')->name('api.group_category.populate');

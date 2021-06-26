@@ -109,14 +109,14 @@
                                 <th
                                     style="width: 15%; vertical-align: bottom;">
                                     Nomor Urut</th>
-                                <td style="width: 40%; vertical-align: bottom">:
+                                <td style="width: 40%; vertical-align: bottom">
                                     <span
                                           style="font-size: 24px; font-weight: bold; font-family: Arial, Helvetica, sans-serif">
                                         {{ $data->index }}</span>
                                 </td>
 
                                 <th style="width: 15%; vertical-align: bottom">Kode</th>
-                                <td style="width: 30%; vertical-align: bottom">:
+                                <td style="width: 30%; vertical-align: bottom">
                                     <span
                                           style="font-size: 24px; font-weight: bold; font-family: Arial, Helvetica, sans-serif">
                                         {{ $data->category->group->code }}</span>
@@ -124,29 +124,29 @@
                             </tr>
                             <tr>
                                 <th>Tanggal Surat</th>
-                                <td>: {{ $data->date_locale }} </td>
+                                <td> {{ $data->date_locale }} </td>
                                 <th>Tgl. Penerimaan</th>
-                                <td>: {{ $data->created_at_locale }}</td>
+                                <td> {{ $data->created_at_locale }}</td>
                             </tr>
                             <tr>
                                 <th>Nomor Surat</th>
-                                <td>: {{ $data->reff }}</td>
+                                <td> {{ $data->reff }}</td>
                                 <th>Tgl. Penyelesaian</th>
-                                <td>: {{ $data->updated_at_locale }} </td>
+                                <td> {{ $data->updated_at_locale }} </td>
                             </tr>
                             <tr>
                                 <th>Asal</th>
-                                <td>: {{ $data->origin }}</td>
+                                <td> {{ $data->origin }}</td>
                                 <th>Sifat</th>
-                                <td>: {{ $data->type->name }}</td>
+                                <td> {{ $data->type->name }}</td>
                             </tr>
                             <tr>
                                 <th>Perihal</th>
-                                <td colspan="3">: {{ $data->subject }}</td>
+                                <td colspan="3"> {{ $data->subject }}</td>
                             </tr>
                             <tr>
                                 <th>Lampiran</th>
-                                <td colspan="3">: {{ $data->attachments ?? '-' }}</td>
+                                <td colspan="3"> {{ $data->attachments ?? '-' }}</td>
                             </tr>
                             <tr>
                                 <th colspan="2">Isi Disposisi :</th>
@@ -207,13 +207,13 @@
                                     <th
                                         style="width: 15%; vertical-align: bottom;">
                                         Nomor Urut</th>
-                                    <td style="width: 40%; vertical-align: bottom">:
+                                    <td style="width: 40%; vertical-align: bottom">
                                         <span
                                               style="font-size: 24px; font-weight: bold; font-family: Arial, Helvetica, sans-serif">
                                             {{ $data->index }}</span>
                                     </td>
                                     <th style="width: 15%; vertical-align: bottom">Kode</th>
-                                    <td style="width: 30%; vertical-align: bottom">:
+                                    <td style="width: 30%; vertical-align: bottom">
                                         <span
                                               style="font-size: 24px; font-weight: bold; font-family: Arial, Helvetica, sans-serif">
                                             {{ $data->category->group->code }}</span>
@@ -221,29 +221,29 @@
                                 </tr>
                                 <tr>
                                     <th>Tanggal Surat</th>
-                                    <td>: {{ $data->date_locale }} </td>
+                                    <td> {{ $data->date_locale }} </td>
                                     <th>Tgl. Penerimaan</th>
-                                    <td>: {{ $data->created_at_locale }}</td>
+                                    <td> {{ $data->created_at_locale }}</td>
                                 </tr>
                                 <tr>
                                     <th>Nomor Surat</th>
-                                    <td>: {{ $data->reff }}</td>
+                                    <td> {{ $data->reff }}</td>
                                     <th>Tgl. Penyelesaian</th>
-                                    <td>: {{ $data->updated_at_locale }} </td>
+                                    <td> {{ $data->updated_at_locale }} </td>
                                 </tr>
                                 <tr>
                                     <th>Asal</th>
-                                    <td>: {{ $data->origin }}</td>
+                                    <td> {{ $data->origin }}</td>
                                     <th>Sifat</th>
-                                    <td>: {{ $data->type->name }}</td>
+                                    <td> {{ $data->type->name }}</td>
                                 </tr>
                                 <tr>
                                     <th>Perihal</th>
-                                    <td colspan="3">: {{ $data->subject }}</td>
+                                    <td colspan="3"> {{ $data->subject }}</td>
                                 </tr>
                                 <tr>
                                     <th>Lampiran</th>
-                                    <td>: {{ $data->attachments ?? '-' }}</td>
+                                    <td> {{ $data->attachments ?? '-' }}</td>
                                     <th>Pengolah</th>
                                     <td>:</td>
                                 </tr>

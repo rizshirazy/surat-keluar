@@ -2,6 +2,7 @@
 
 use App\Category;
 use App\Outbox;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
@@ -25,11 +26,6 @@ Auth::routes([
     'verify' => false, // Email Verification Routes...
 ]);
 
-Route::get('test', function () {
-    $inbox = App\Inbox::all();
-    return $inbox;
-});
-
 Route::middleware(['auth'])->group(function () {
     Route::get('/', 'HomeController@index')->name('home');
 
@@ -38,7 +34,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('outbox/report', 'OutboxController@report')->name('outbox.report');
 
     Route::resource('inbox', 'InboxController')->names('inbox');
-    Route::get('inbox/{id}/print', 'InboxController@print')->name('inbox.print');
+    Route::get('inbox/{inbox}/print', 'InboxController@print')->name('inbox.print');
     Route::post('inbox/modal', 'InboxController@modal')->name('inbox.modal');
     Route::post('inbox/report', 'InboxController@report')->name('inbox.report');
 
@@ -55,4 +51,21 @@ Route::middleware(['auth'])->group(function () {
     Route::get('disposition/populate', 'DispositionController@populateByUser')->name('disposition.populate_by_user');
     Route::view('change-password', 'auth.passwords.change')->name('password.change.view');
     Route::post('change-password', 'UserController@change_password')->name('password.change.post');
+
+    // Route::middleware(['CheckRole:admin'])->group(function () {
+    //     Route::get('clear', function () {
+    //         Artisan::call('cache:clear');
+    //         Artisan::call('config:clear');
+    //         Artisan::call('config:cache');
+    //         Artisan::call('view:clear');
+
+    //         return 'Cleared';
+    //     })->name('clear');
+
+    //     Route::get('link', function () {
+    //         Artisan::call('storage:link');
+
+    //         return 'Linked';
+    //     })->name('link');
+    // });
 });
