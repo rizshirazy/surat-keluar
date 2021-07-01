@@ -20,7 +20,7 @@
                                 <input id="email" type="email"
                                        class="form-control col-md-8 @error('email') is-invalid @enderror"
                                        name="email" value="{{ old('email') }}" required autocomplete="email" autofocus
-                                       placeholder="Alamat Email">
+                                       placeholder="Username">
 
                                 @error('email')
                                 <div class="invalid-feedback text-center" role="alert">

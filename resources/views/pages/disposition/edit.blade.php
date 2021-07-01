@@ -18,9 +18,7 @@
                             <th class="bg-light" width="20%">Nomor Surat</th>
                             <td class="bg-white">{{ $data->mail->reff }}</td>
                             <th class="bg-light" width="20%">Tanggal Surat</th>
-                            <td class="bg-white">
-                                {{ Carbon\Carbon::parse($data->mail->date)->locale('id')->format('d F Y') }}
-                            </td>
+                            <td class="bg-white"> {{ $data->mail->date_locale }} </td>
                         </tr>
                         <tr>
                             <th class="bg-light" width="20%">Perihal</th>
@@ -63,7 +61,7 @@
                             <tr>
                                 <th>No</th>
                                 <th>Nama</th>
-                                <th>Catatan</th>
+                                <th>Isi Disposisi</th>
                             </tr>
                         </thead>
 
@@ -93,7 +91,7 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="notes">Catatan</label>
+                                    <label for="notes">Isi Disposisi</label>
                                     <textarea name="notes" id="notes"
                                               class="form-control @error('notes') is-invalid @enderror"
                                               onchange="mirrorForm()">
@@ -123,7 +121,7 @@
                     </form>
 
                     <button type="button" class="btn btn-success px-3"
-                            onclick="completed()">Selesai</button>
+                            onclick="completed()">Selesaikan Disposisi</button>
                     <button type="button" class="btn btn-primary px-3"
                             onclick="updateData()">Lanjutkan Disposisi</button>
                     <a href="{{ route('inbox.index') }}" class="btn btn-light px-3">Kembali</a>

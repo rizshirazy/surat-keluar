@@ -24,7 +24,7 @@ class OutboxController extends Controller
     public function index()
     {
         if (request()->ajax()) {
-            $query = Outbox::query();
+            $query = Outbox::with('category');
 
             return DataTables::of($query)
                 ->editColumn('date', function ($item) {

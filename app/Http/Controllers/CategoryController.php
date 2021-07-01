@@ -17,7 +17,7 @@ class CategoryController extends Controller
     public function index()
     {
         if (request()->ajax()) {
-            $query = Category::query();
+            $query = Category::with('group');
 
             return DataTables::of($query)
                 ->addColumn('group', function ($item) {

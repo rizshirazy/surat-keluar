@@ -24,7 +24,7 @@ class InboxController extends Controller
     {
 
         if (request()->ajax()) {
-            $query = Inbox::query();
+            $query = Inbox::with(['category', 'type']);
 
             return DataTables::of($query)
                 ->editColumn('date', function ($item) {

@@ -244,7 +244,7 @@
                                 <tr>
                                     <th>Lampiran</th>
                                     <td> {{ $data->attachments ?? '-' }}</td>
-                                    <th>Pengolah</th>
+                                    <th>Pelaksana</th>
                                     <td>:</td>
                                 </tr>
                                 <tr>

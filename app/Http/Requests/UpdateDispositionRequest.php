@@ -26,7 +26,6 @@ class UpdateDispositionRequest extends FormRequest
     {
         return [
             'user_id'   => 'required',
-            'notes'     => 'required',
         ];
     }
 
@@ -39,7 +38,6 @@ class UpdateDispositionRequest extends FormRequest
     {
         return [
             'user_id.required'  => 'Nama pegawai tidak boleh kosong',
-            'notes.required'    => 'Catatan tidak boleh kosong',
         ];
     }
 }

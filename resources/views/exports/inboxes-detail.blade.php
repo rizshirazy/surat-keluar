@@ -31,22 +31,25 @@
     </thead>
     <tbody>
         @forelse ($data as $item)
+        @php
+        $show = !$item->confidential || role('PETUGAS') || role('SUPER ADMIN')
+        @endphp
         <tr>
             <td>{{ $loop->iteration }}</td>
             <td>
-                {{ !$item->confidential || role('PETUGAS') || role('SUPER ADMIN') ? $item->reff : '-' }}
+                {{ $show ? $item->reff : '-' }}
             </td>
             <td>{{ Carbon\Carbon::parse($item->date)->format('d/m/Y') }}</td>
             <td>{{ $item->type->name }}</td>
             <td>
-                {{ !$item->confidential || role('PETUGAS') || role('SUPER ADMIN') ? $item->category->group->code : '-' }}
+                {{ $show ? $item->category->group->code : '-' }}
             </td>
             <td>
-                {{ !$item->confidential || role('PETUGAS') || role('SUPER ADMIN') ? $item->subject : '-' }}</td>
+                {{ $show ? $item->subject : '-' }}</td>
             <td>
-                {{ !$item->confidential || role('PETUGAS') || role('SUPER ADMIN') ? $item->origin : '-' }}</td>
+                {{ $show ? $item->origin : '-' }}</td>
             <td>
-                {{ !$item->confidential || role('PETUGAS') || role('SUPER ADMIN') ? $item->user->name : '-' }}</td>
+                {{ $show ? $item->user->name : '-' }}</td>
         </tr>
         @empty
         <tr>

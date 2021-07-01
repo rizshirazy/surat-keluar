@@ -31,15 +31,18 @@
     </thead>
     <tbody>
         @forelse ($data as $item)
+        @php
+        $show = !$item->confidential || role('PETUGAS') || role('SUPER ADMIN')
+        @endphp
         <tr>
             <td>{{ $loop->iteration }}</td>
-            <td>{{ $item->confidential ? '-' : $item->reff }}</td>
+            <td>{{ $show ? $item->reff : '-'}}</td>
             <td>{{ Carbon\Carbon::parse($item->date)->format('d/m/Y') }}</td>
             <td>{{ $item->type->name }}</td>
-            <td>{{ $item->confidential ? '-' : $item->category->group->code }}</td>
-            <td>{{ $item->confidential ? '-' : $item->subject }}</td>
-            <td>{{ $item->confidential ? '-' : $item->destination }}</td>
-            <td>{{ $item->confidential ? '-' : $item->user->name }}</td>
+            <td>{{ $show ? $item->category->group->code : '-' }}</td>
+            <td>{{ $show ? $item->subject : '-' }}</td>
+            <td>{{ $show ? $item->destination : '-' }}</td>
+            <td>{{ $show ? $item->user->name : '-' }}</td>
         </tr>
         @empty
         <tr>
