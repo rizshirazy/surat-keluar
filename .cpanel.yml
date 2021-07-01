@@ -1,0 +1,5 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/muhb8442/public_html/aplikasi/sitanas
+    - /bin/cp -R . $DEPLOYPATH
